@@ -19,13 +19,39 @@ if is_no "${NETWORKING}"; then
         exit 1
 fi
 
+# Get service config
+[ -f /etc/sysconfig/vtun ] && . /etc/sysconfig/vtun
+
+err_exit() {
+    echo @$
+    exit 1
+}
+
+[ -n $VTUND_MODE ] || err_exit "VTUND_MODE not set"
+
+VTUND_OPTS="$VTUND_OPTS $VTUND_CONF"
+    
+if [ $VTUND_MODE = "server" ]; then
+    VTUND_OPTS="$VTUND_OPTS -s"
+	
+elif [ $VTUND_MODE = "client" ]; then
+    [ -n $VTUND_SESSION ] || err_exit "VTUND_SESSION not set"
+    [ -n $VTUND_SERVER_ADDR ] || err_exit "VTUND_SERVER_ADDR not set"
+    VTUND_OPTS="$VTUND_OPTS $VTUND_SESSION $VTUND_SERVER_ADDR"
+    [ -n $VTUND_PORT ] && VTUND_OPTS="$VTUND_OPTS -P $VTUND_PORT"
+
+else 
+    err_exit "Invalid VTUND_MODE ($VTUND_MODE), should be set to \"server\" or \"client\""
+fi
+
+
 # See how we were called.
 case "$1" in
   start)
         # Check if the service is already running?
         if [ ! -f /var/lock/subsys/vtund ]; then
                 msg_starting Vtund
-                daemon vtund -s
+                daemon vtund $VTUND_OPTS
                 RETVAL=$?
                 [ $RETVAL -eq 0 ] && touch /var/lock/subsys/vtund
         else
