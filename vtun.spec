@@ -2,7 +2,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.4
-Release:	2
+Release:	3
 Epoch:		1
 License:	GPL
 Group:		Networking/Daemons
@@ -11,6 +11,7 @@ Group(pl):	Sieciowe/Serwery
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
 Source0:	http://vtun.sourceforge.net/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
+Source2:	%{name}.sysconfig
 Patch0:		%{name}-makefile.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
@@ -55,11 +56,12 @@ autoconf
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
-	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_localstatedir}/log/vtun}
+           $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun}
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/vtund
+install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/vtun
 
 gzip -9nf ChangeLog Credits README README.Setup README.Shaper FAQ TODO
 
@@ -86,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc {ChangeLog,Credits,README,README.Setup,README.Shaper,FAQ,TODO}.gz
 %attr(754,root,root) %{_sysconfdir}/rc.d/init.d/vtund
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sysconfig/vtun
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vtund.conf
 %attr(755,root,root) %{_sbindir}/vtund
 %attr(755,root,root) %dir /var/log/vtund
