@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# Script for starting and stoping vtund.
+#
+# chkconfig: 345 55 45
+# description: vtund Virtual Tunnel Daemon.
+#    VTun provides the method for creating Virtual Tunnels over TCP/IP networks
+#    and allows to shape, compress, encrypt traffic in that tunnels.
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# See how we were called.
+case "$1" in
+  start)
+        show Starting vtund
+        daemon /usr/sbin/vtund -s
+        touch /var/lock/subsys/vtund
+        ;;
+  stop)
+        show Stopping vtund
+        killproc vtund
+        rm -f /var/lock/subsys/vtund
+        ;;
+  restart)
+	$0 stop
+	$0 start
+        ;;
+  status)
+        status vtund
+        ;;
+  *)
+        echo "Usage: vtund {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0
