@@ -1,0 +1,156 @@
+diff -uNr vtun-2.5b1/cfg_file.y vtun-2.5b1-iproute/cfg_file.y
+--- vtun-2.5b1/cfg_file.y	Thu Jul 26 03:17:47 2001
++++ vtun-2.5b1-iproute/cfg_file.y	Tue Aug 21 01:11:41 2001
+@@ -74,7 +74,7 @@
+ %token K_PASSWD K_PROG K_PPP K_SPEED K_IFCFG K_FWALL K_ROUTE K_DEVICE 
+ %token K_MULTI K_SRCADDR K_IFACE K_ADDR
+ %token K_TYPE K_PROT K_COMPRESS K_ENCRYPT K_KALIVE K_STAT
+-%token K_UP K_DOWN K_SYSLOG
++%token K_UP K_DOWN K_SYSLOG K_IPROUTE
+ 
+ %token <str> K_HOST K_ERROR
+ %token <str> WORD PATH STRING
+@@ -175,6 +175,11 @@
+ 			  vtun.fwall = strdup($2); 	
+ 			}
+ 
++  | K_IPROUTE PATH 	{   
++			  free(vtun.iproute);  
++			  vtun.iproute = strdup($2); 	
++			}
++
+   | K_SYSLOG  syslog_opt
+ 
+   | K_PERSIST NUM 	{ 
+@@ -418,6 +423,11 @@
+ 					VTUN_CMD_WAIT);
+ 			}
+ 
++  | K_IPROUTE STRING 	{   
++			  add_cmd(parse_cmds, strdup(vtun.iproute),strdup($2),
++					VTUN_CMD_WAIT);
++			}
++
+   | K_ERROR		{
+ 			  cfg_error("Unknown cmd '%s'",$1);
+ 			  YYABORT;
+diff -uNr vtun-2.5b1/cfg_kwords.h vtun-2.5b1-iproute/cfg_kwords.h
+--- vtun-2.5b1/cfg_kwords.h	Mon Jun 11 00:48:38 2001
++++ vtun-2.5b1-iproute/cfg_kwords.h	Tue Aug 21 01:04:15 2001
+@@ -53,6 +53,7 @@
+    { "ifcfg", 	 K_IFCFG },
+    { "firewall", K_FWALL }, 
+    { "route", 	 K_ROUTE }, 
++   { "ip", 	 K_IPROUTE }, 
+    { "keepalive",K_KALIVE }, 
+    { "stat",	 K_STAT }, 
+    { "syslog",   K_SYSLOG },
+diff -uNr vtun-2.5b1/main.c vtun-2.5b1-iproute/main.c
+--- vtun-2.5b1/main.c	Mon Jun 11 00:48:38 2001
++++ vtun-2.5b1-iproute/main.c	Tue Aug 21 01:08:44 2001
+@@ -67,6 +67,7 @@
+      vtun.ifcfg = strdup("/sbin/ifconfig");
+      vtun.route = strdup("/sbin/route");
+      vtun.fwall = strdup("/sbin/ipchains");	
++     vtun.iproute = strdup("/sbin/ip");	
+ 
+      vtun.svr_name = NULL;
+      vtun.svr_port = -1;
+diff -uNr vtun-2.5b1/vtun.h vtun-2.5b1-iproute/vtun.h
+--- vtun-2.5b1/vtun.h	Mon Jun 11 00:48:38 2001
++++ vtun-2.5b1-iproute/vtun.h	Tue Aug 21 01:07:27 2001
+@@ -167,6 +167,7 @@
+    char *ifcfg;		 /* Command to configure net devices */
+    char *route;		 /* Command to configure routing */
+    char *fwall; 	 /* Command to configure FireWall */
++   char *iproute;	 /* iproute command */
+ 
+    char *svr_name;       /* Server's host name */
+    int  svr_port;	 /* Server's port */
+diff -uNr vtun-2.5b1/vtund.conf vtun-2.5b1-iproute/vtund.conf
+--- vtun-2.5b1/vtund.conf	Mon Jun 11 00:48:38 2001
++++ vtun-2.5b1-iproute/vtund.conf	Tue Aug 21 01:49:01 2001
+@@ -242,6 +242,7 @@
+   ifconfig 	/sbin/ifconfig;
+   route 	/sbin/route;
+   firewall 	/sbin/ipchains;
++  ip		/sbin/ip;
+ }
+ 
+ # Default session options 
+@@ -267,6 +268,25 @@
+   };
+ }
+ 
++# the same as above, but with iproute2 command
++cobra {
++  pass  Ma&^TU;		# Password
++  type  tun;		# IP tunnel 
++  proto udp;   		# UDP protocol
++  comp  lzo:9;		# LZO compression level 9
++  encr  yes;		# Encryption
++  keepalive yes;	# Keep connection alive
++
++  up {
++	# Connection is Up 
++
++	# 10.3.0.1 - local, 10.3.0.2 - remote 
++	ip "link set %% up multicast off mtu 1450";
++	ip "-family inet addr add 10.3.0.1 peer 10.3.0.2 dev %%";
++  };
++}
++
++
+ # Ethernet example. Session 'lion'.
+ lion {
+   pass  Ma&^TU;		# Password
+@@ -362,6 +382,7 @@
+   ifconfig	/sbin/ifconfig;
+   route		/sbin/route;
+   firewall	/sbin/ipchains;
++  ip		/sbin/ip;
+ }
+ 
+ # TUN example. Session 'cobra'. 
+@@ -376,6 +397,19 @@
+ 	ifconfig "%% 10.3.0.2 pointopoint 10.3.0.1 mtu 1450";
+   };
+ }
++# same as above, but with iproute2 command
++cobra {
++  pass  Ma&^TU;		# Password
++  device tun1; 		# Device tun1 
++  persist yes;		# Persist mode 
++  up {
++	# Connection is Up 
++
++	# Assign IP addresses. 
++	ip "link set %% up multicast off mtu 1450";
++	ip "-family inet addr add 10.3.0.2 peer 10.3.0.1 dev %%";
++  };
++}
+ 
+ # Ethernet example. Session 'lion'. 
+ lion {
+diff -uNr vtun-2.5b1/vtund.conf.5 vtun-2.5b1-iproute/vtund.conf.5
+--- vtun-2.5b1/vtund.conf.5	Mon Jun 11 00:48:38 2001
++++ vtun-2.5b1-iproute/vtund.conf.5	Tue Aug 21 01:17:08 2001
+@@ -70,6 +70,9 @@
+ .IP \fBroute\ \fIpath\fR
+ path to \fBroute\fR(8) program.  Can be used in session sections.
+ 
++.IP \fBip\ \fIpath\fR
++path to \fBiproute\fR(8) program.  Can be used in session sections.
++
+ .IP \fBfirewall\ \fIpath\fR
+ program for the firewall setup.
+ 
+@@ -228,6 +231,8 @@
+ run program specified by \fBifconfig\fR statement in \fBoptions\fR section.
+ .IP \fBroute\ \fIarguments\fR
+ run program specified by \fBroute\fR statement in \fBoptions\fR section.
++.IP \fBip\ \fIarguments\fR
++run program specified by \fBip\fR statement in \fBoptions\fR section.
+ .IP \fBfirewall\ \fIarguments\fR
+ run program specified by \fBfirewall\fR statement in \fBoptions\fR section.
+ .RE
