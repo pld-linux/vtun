@@ -20,6 +20,7 @@ Patch1:		%{name}-expect.patch
 Patch2:		%{name}-autoheader.patch
 Patch3:		%{name}-getpt.patch
 Patch4:		%{name}-sslauth.patch
+Patch5:		%{name}-ac.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -54,6 +55,7 @@ protoko³ów szeregowych.
 %prep
 %setup -q -n vtun
 %patch2 -p1
+%patch5 -p1
 # must be ported
 #%%patch4 -p1
 
