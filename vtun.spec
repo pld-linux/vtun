@@ -58,8 +58,8 @@ protoko³ów szeregowych.
 %patch4 -p1
 
 %build
-aclocal
-autoheader
+%{__aclocal}
+%{__autoheader}
 %{__autoconf}
 %configure \
 	%{!?_without_ssl:--with-crypto-headers=%{_includedir}/openssl} \
