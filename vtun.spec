@@ -8,7 +8,7 @@ Group(pl):	Sieciowe/Serwery
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
 Source0:	http://vtun.netpedia.net/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
-Patch:		%{name}-makefile.patch
+Patch0:		%{name}-makefile.patch
 URL:		http://vtun.netpedia.net
 BuildRequires:	openssl-devel
 BuildRequires:	zlib-devel
@@ -18,14 +18,14 @@ Obsoletes:	vppp
 %define		_localstatedir	/var
 
 %description
-VTun provides the method for creating Virtual Tunnels over TCP/IP networks
-and allows to shape, compress, encrypt traffic in that tunnels. Supported
-type of tunnels are: PPP, IP, Ethernet and most of other serial protocols
-and programs. VTun is easily and highly configurable, it can be used for
-various network task like VPN, Mobil IP, Shaped Internet access, IP address
-saving, etc. It is completely user space implementation and does not require
-modification to any kernel parts. You need SSLeay-devel and lzo-devel to
-build it.
+VTun provides the method for creating Virtual Tunnels over TCP/IP
+networks and allows to shape, compress, encrypt traffic in that
+tunnels. Supported type of tunnels are: PPP, IP, Ethernet and most of
+other serial protocols and programs. VTun is easily and highly
+configurable, it can be used for various network task like VPN, Mobil
+IP, Shaped Internet access, IP address saving, etc. It is completely
+user space implementation and does not require modification to any
+kernel parts. You need SSLeay-devel and lzo-devel to build it.
 
 %prep
 %setup -q
