@@ -34,7 +34,7 @@ kernel parts. You need SSLeay-devel and lzo-devel to build it.
 LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--with-crypto-headers=%{_includedir}/openssl
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
