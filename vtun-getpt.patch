@@ -1,0 +1,46 @@
+diff -Naur vtun-2.5b1/generic/pty_dev.c vtun-2.5b1-p/generic/pty_dev.c
+--- vtun-2.5b1/generic/pty_dev.c	Mon Nov 20 08:57:33 2000
++++ vtun-2.5b1-p/generic/pty_dev.c	Wed Nov  7 19:15:16 2001
+@@ -38,32 +38,21 @@
+  */  
+ int pty_open(char *sl_name)
+ {
+-    char ptyname[] = "/dev/ptyXY";
+-    char ch[] = "pqrstuvwxyz";
+-    char digit[] = "0123456789abcdefghijklmnopqrstuv";
+     int  l, m;
+     int  mr_fd;
++    char *ptyname;
+ 
+     /* This algorithm should work for almost all standard Unices */	
+-    for(l=0; ch[l]; l++ ) {
+-        for(m=0; digit[m]; m++ ) {
+-	 	ptyname[8] = ch[l];
+-		ptyname[9] = digit[m];
+-		/* Open the master */
+-		if( (mr_fd=open(ptyname, O_RDWR)) < 0 )
+-	 	   continue;
+-		/* Check the slave */
+-		ptyname[5] = 't';
+-		if( (access(ptyname, R_OK | W_OK)) < 0 ){
+-		   close(mr_fd);
+-		   ptyname[5] = 'p';
+-		   continue;
+-		}
+-		strcpy(sl_name,ptyname);
+-		return mr_fd;
+-	    }
+-	}
++    if((mr_fd=getpt()) < 0)
+ 	return -1;
++    if(grantpt(mr_fd) != 0)
++	return -1;
++    if(unlockpt(mr_fd) != 0)
++	return -1;
++    if ((ptyname = ptsname(mr_fd)) == NULL)
++	return -1;
++    strcpy(sl_name, ptyname);
++    return mr_fd;
+ }
+ 
+ /* Write frames to PTY device */
