@@ -1,0 +1,9 @@
+--- vtun-2.5b1/acconfig.h	Thu Nov  8 13:03:14 2001
++++ vtun-2.5b1-p/acconfig.h	Thu Nov  8 13:00:20 2001
+@@ -0,0 +1,6 @@
++#undef HAVE_LZO
++#undef HAVE_SETPROC_TITLE
++#undef HAVE_SHAPER
++#undef HAVE_SSL
++#undef HAVE_ZLIB
++#undef VTUN_VER
