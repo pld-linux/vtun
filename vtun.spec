@@ -47,10 +47,13 @@ user space implementation and does not require modification to any
 kernel parts. You need SSLeay-devel and lzo-devel to build it.
 
 %description -l pl
-VTun umo¿liwia tworzenie Wirtualnych Tunelu poprzez sieci TCP/IP wraz
+VTun umo¿liwia tworzenie tuneli poprzez sieci TCP/IP wraz
 z przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
 Wspierane typy tuneli to: PPP, IP, Ethernet i wiêkszo¶æ pozosta³ych
-protoko³ów szeregowych.
+protoko³ów szeregowych. VTun jest ³atwy i elastyczny w konfiguracji.
+Mo¿e zostaæ wykorzystany do takich sieciowych zastosowañ jak VPN, 
+Mobil IP, ³±cza o okre¶lonym pa¶mie oraz innych. Dzia³a w warstwie
+user space, wiêc nie wymaga dodatkowego wsparcia w j±drze.
 
 %prep
 %setup -q -n vtun
