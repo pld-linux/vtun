@@ -1,11 +1,12 @@
 #!/bin/sh
 #
-# Script for starting and stoping vtund.
+# vtun		Script for starting and stoping vtund.
 #
-# chkconfig: 345 55 45
-# description: vtund Virtual Tunnel Daemon.
-#    VTun provides the method for creating Virtual Tunnels over TCP/IP networks
-#    and allows to shape, compress, encrypt traffic in that tunnels.
+# chkconfig:	345 55 45
+# description:	vtund Virtual Tunnel Daemon. \
+#		VTun provides the method for creating Virtual Tunnels over \
+#		TCP/IP networks and allows to shape, compress, encrypt \
+#		traffic in that tunnels.
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -14,74 +15,84 @@
 . /etc/sysconfig/network
 
 # Check that networking is up.
-if is_no "${NETWORKING}"; then
-        msg_Network_Down Vtund
-        exit 1
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		msg_network_down Vtund
+		exit 1
+	fi
+else
+	exit 0
 fi
 
 # Get service config
 [ -f /etc/sysconfig/vtun ] && . /etc/sysconfig/vtun
 
 err_exit() {
-    echo @$
-    exit 1
+	echo @$
+	exit 1
 }
 
 [ -n "$VTUND_MODE" ] || err_exit "VTUND_MODE not set"
 
 VTUND_OPTS="$VTUND_OPTS -f $VTUND_CONF"
-    
+
 if [ $VTUND_MODE = "server" ]; then
-    VTUND_OPTS="$VTUND_OPTS -s"
-	
+	VTUND_OPTS="$VTUND_OPTS -s"
+
 elif [ $VTUND_MODE = "client" ]; then
-    [ -n "$VTUND_SESSION" ] || err_exit "VTUND_SESSION not set"
-    [ -n "$VTUND_SERVER_ADDR" ] || err_exit "VTUND_SERVER_ADDR not set"
-    [ -n "$VTUND_PORT" ] && VTUND_OPTS="$VTUND_OPTS -P $VTUND_PORT"
-    VTUND_OPTS="$VTUND_OPTS $VTUND_SESSION $VTUND_SERVER_ADDR"
+	[ -n "$VTUND_SESSION" ] || err_exit "VTUND_SESSION not set"
+	[ -n "$VTUND_SERVER_ADDR" ] || err_exit "VTUND_SERVER_ADDR not set"
+	[ -n "$VTUND_PORT" ] && VTUND_OPTS="$VTUND_OPTS -P $VTUND_PORT"
+	VTUND_OPTS="$VTUND_OPTS $VTUND_SESSION $VTUND_SERVER_ADDR"
 
 else 
-    err_exit "Invalid VTUND_MODE ($VTUND_MODE), should be set to \"server\" or \"client\""
+	err_exit "Invalid VTUND_MODE ($VTUND_MODE), should be set to \"server\" or \"client\""
 fi
 
 
 # See how we were called.
 case "$1" in
   start)
-        # Check if the service is already running?
-        if [ ! -f /var/lock/subsys/vtund ]; then
-                msg_starting Vtund
-                daemon vtund $VTUND_OPTS
-                RETVAL=$?
-                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/vtund
-        else
-                msg_Already_Running Vtund
-                exit 1
-        fi
-																				
-        ;;
-  stop)
-        # Stop daemons.
-	if [ -f /var/lock/subsys/vtund ]; then
-	        msg_stopping Vtund
-	        killproc vtund
-	        rm -f /var/lock/subsys/vtund >/dev/null 2>&1
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/vtund ]; then
+		msg_starting Vtund
+		daemon vtund $VTUND_OPTS
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/vtund
 	else
-                msg_Not_Running Vtund
-                exit 1
-        fi
-        ;;
-  restart)
+		msg_already_running Vtund
+		exit 1
+	fi
+																				
+	;;
+  stop)
+	if [ -f /var/lock/subsys/vtund ]; then
+		# Stop daemons.
+		msg_stopping Vtund
+		killproc vtund
+		RETVAL=$?
+		rm -f /var/lock/subsys/vtund >/dev/null 2>&1
+	else
+		msg_not_running Vtund
+		exit 1
+	fi
+	;;
+  restart|reload)
 	$0 stop
 	$0 start
-        ;;
-  status)
-        status vtund
 	exit $?
-        ;;
+	;;
+  force-reload)
+	$0 stop && $0 start
+	exit $?
+	;;
+  status)
+	status vtund
+	exit $?
+	;;
   *)
-        msg_Usage "$0 {start|stop|restart|status}"
-        exit 1
+	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+	exit 1
 esac
 
 exit $RETVAL
