@@ -4,6 +4,7 @@ Version:	2.3
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
+Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
 Source0:	ftp://vtun.sourceforge.net/pub/vtun/%{name}-%{version}.tar.gz
@@ -31,7 +32,6 @@ kernel parts. You need SSLeay-devel and lzo-devel to build it.
 %setup -q
 %patch -p1
 %build
-LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--with-crypto-headers=%{_includedir}/openssl \
 	--enable-lzo
