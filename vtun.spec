@@ -10,7 +10,7 @@ Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
-Source0:	http://prdownloads.sourceforge.net/vtun/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-makefile.patch
@@ -21,13 +21,13 @@ Patch4:		%{name}-sslauth.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	bison
+BuildRequires:	flex
 BuildRequires:	lzo-devel
 %{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.7}
 BuildRequires:	zlib-devel
-BuildRequires:	bison
-BuildRequires:	flex
-Prereq:		rc-scripts
-Prereq:		/sbin/chkconfig
+PreReq:		rc-scripts
+Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	vppp
 
@@ -76,7 +76,6 @@ install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/vtund
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
