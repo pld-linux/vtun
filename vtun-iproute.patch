@@ -67,6 +67,71 @@ diff -uNr vtun-2.5b1/vtun.h vtun-2.5b1-iproute/vtun.h
  
     char *svr_name;       /* Server's host name */
     int  svr_port;	 /* Server's port */
+diff -uNr vtun-2.5b1/vtund.conf vtun-2.5b1-iproute/vtund.conf
+--- vtun-2.5b1/vtund.conf	Mon Jun 11 00:48:38 2001
++++ vtun-2.5b1-iproute/vtund.conf	Tue Aug 21 01:49:01 2001
+@@ -242,6 +242,7 @@
+   ifconfig 	/sbin/ifconfig;
+   route 	/sbin/route;
+   firewall 	/sbin/ipchains;
++  ip		/sbin/ip;
+ }
+ 
+ # Default session options 
+@@ -267,6 +268,25 @@
+   };
+ }
+ 
++# the same as above, but with iproute2 command
++cobra {
++  pass  Ma&^TU;		# Password
++  type  tun;		# IP tunnel 
++  proto udp;   		# UDP protocol
++  comp  lzo:9;		# LZO compression level 9
++  encr  yes;		# Encryption
++  keepalive yes;	# Keep connection alive
++
++  up {
++	# Connection is Up 
++
++	# 10.3.0.1 - local, 10.3.0.2 - remote 
++	ip "link set %% up multicast off mtu 1450";
++	ip "-family inet addr add 10.3.0.1 peer 10.3.0.2 dev %%";
++  };
++}
++
++
+ # Ethernet example. Session 'lion'.
+ lion {
+   pass  Ma&^TU;		# Password
+@@ -362,6 +382,7 @@
+   ifconfig	/sbin/ifconfig;
+   route		/sbin/route;
+   firewall	/sbin/ipchains;
++  ip		/sbin/ip;
+ }
+ 
+ # TUN example. Session 'cobra'. 
+@@ -376,6 +397,19 @@
+ 	ifconfig "%% 10.3.0.2 pointopoint 10.3.0.1 mtu 1450";
+   };
+ }
++# same as above, but with iproute2 command
++cobra {
++  pass  Ma&^TU;		# Password
++  device tun1; 		# Device tun1 
++  persist yes;		# Persist mode 
++  up {
++	# Connection is Up 
++
++	# Assign IP addresses. 
++	ip "link set %% up multicast off mtu 1450";
++	ip "-family inet addr add 10.3.0.2 peer 10.3.0.1 dev %%";
++  };
++}
+ 
+ # Ethernet example. Session 'lion'. 
+ lion {
 diff -uNr vtun-2.5b1/vtund.conf.5 vtun-2.5b1-iproute/vtund.conf.5
 --- vtun-2.5b1/vtund.conf.5	Mon Jun 11 00:48:38 2001
 +++ vtun-2.5b1-iproute/vtund.conf.5	Tue Aug 21 01:17:08 2001
