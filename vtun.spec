@@ -1,8 +1,11 @@
+# Conditional build:
+# _without_ssl - build without encryption ability
+
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.5b1
-Release:	4
+Release:	5
 Epoch:		1
 License:	GPL
 Group:		Networking/Daemons
@@ -18,7 +21,7 @@ URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	autoconf
 BuildRequires:	lzo-devel
-BuildRequires:	openssl-devel >= 0.9.6a
+%{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.6a}
 BuildRequires:	zlib-devel
 BuildRequires:	bison
 BuildRequires:	flex
@@ -54,7 +57,8 @@ protoko³ów szeregowych.
 aclocal
 autoconf
 %configure \
-	--with-crypto-headers=%{_includedir}/openssl \
+	%{!?_without_ssl:--with-crypto-headers=%{_includedir}/openssl} \
+	%{?_without_ssl:--disable-ssl} \
 	--enable-lzo
 %{__make}
 
