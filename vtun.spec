@@ -40,8 +40,8 @@ user space implementation and does not require modification to any
 kernel parts. You need SSLeay-devel and lzo-devel to build it.
 
 %description -l pl
-VTun umo¿liwia tworzenie Wirtualnych Tunelu poprzez sieci TCP/IP
-wraz z przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
+VTun umo¿liwia tworzenie Wirtualnych Tunelu poprzez sieci TCP/IP wraz
+z przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
 Wspierane typy tuneli to: PPP, IP, Ethernet i wiêkszo¶æ pozosta³ych
 protoko³ów szeregowych.
 
@@ -61,7 +61,7 @@ autoconf
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
-           $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun}
+	$RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun}
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
