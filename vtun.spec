@@ -12,7 +12,7 @@ Patch:		%{name}-makefile.patch
 URL:		http://vtun.netpedia.net
 BuildRequires:	openssl-devel
 BuildRequires:	zlib-devel
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	vppp
 
 %define		_localstatedir	/var
