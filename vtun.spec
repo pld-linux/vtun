@@ -1,6 +1,6 @@
 Summary:	Virtual tunnel over TCP/IP networks.
 Name:		vtun
-Version:	2.1b3
+Version:	2.1b4
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
