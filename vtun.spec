@@ -13,6 +13,8 @@ Source0:	http://vtun.sourceforge.net/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Patch0:		%{name}-makefile.patch
 URL:		http://vtun.sourceforge.net/
+BuildRequires:	autoconf
+BuildRequires:	autoconf
 BuildRequires:	lzo-devel
 BuildRequires:	openssl-devel
 BuildRequires:	zlib-devel
