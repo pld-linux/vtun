@@ -1,0 +1,170 @@
+diff -ru vtun-2.5-orig/auth.c vtun-2.5/auth.c
+--- vtun-2.5-orig/auth.c	Thu Sep  6 21:43:41 2001
++++ vtun-2.5/auth.c	Sat Feb 16 18:47:19 2002
+@@ -26,6 +26,9 @@
+  *
+  * Jim Yonan, 05/24/2001
+  * 	gen_chal rewrite to use better random number generator 
++ *
++ * Artur R. Czechowski <arturcz@hell.pl>, 02/16/2002
++ * 	Add support for connectin ssl to non-ssl vtuns (sslauth option)
+  */ 
+ 
+ #include "config.h"
+@@ -70,7 +73,7 @@
+    RAND_bytes(buf, VTUN_CHAL_SIZE);
+ }
+ 
+-void encrypt_chal(char *chal, char *pwd)
++void ssl_encrypt_chal(char *chal, char *pwd)
+ { 
+    register int i;
+    BF_KEY key;
+@@ -81,7 +84,7 @@
+       BF_ecb_encrypt(chal + i,  chal + i, &key, BF_ENCRYPT);
+ }
+ 
+-void decrypt_chal(char *chal, char *pwd)
++void ssl_decrypt_chal(char *chal, char *pwd)
+ { 
+    register int i;
+    BF_KEY key;
+@@ -94,20 +97,6 @@
+ 
+ #else /* HAVE_SSL */
+ 
+-void encrypt_chal(char *chal, char *pwd)
+-{ 
+-   char * xor_msk = pwd;
+-   register int i, xor_len = strlen(xor_msk);
+-
+-   for(i=0; i < VTUN_CHAL_SIZE; i++)
+-      chal[i] ^= xor_msk[i%xor_len];
+-}
+-
+-void inline decrypt_chal(char *chal, char *pwd)
+-{ 
+-   encrypt_chal(chal, pwd);
+-}
+-
+ /* Generate PSEUDO random challenge key. */
+ void gen_chal(char *buf)
+ {
+@@ -118,8 +107,33 @@
+    for(i=0; i < VTUN_CHAL_SIZE; i++)
+       buf[i] = (unsigned int)(255.0 * rand()/RAND_MAX);
+ }
++
++void ssl_encrypt_chal(char *chal, char *pwd)
++{
++	syslog(LOG_ERR,"Cannot use `sslauth yes' without SSL support");
++}
++
++void ssl_decrypt_chal(char *chal, char *pwd)
++{
++	syslog(LOG_ERR,"Cannot use `sslauth yes' without SSL support");
++}
++
+ #endif /* HAVE_SSL */
+ 
++void nonssl_encrypt_chal(char *chal, char *pwd)
++{ 
++   char * xor_msk = pwd;
++   register int i, xor_len = strlen(xor_msk);
++
++   for(i=0; i < VTUN_CHAL_SIZE; i++)
++      chal[i] ^= xor_msk[i%xor_len];
++}
++
++void inline nonssl_decrypt_chal(char *chal, char *pwd)
++{ 
++   nonssl_encrypt_chal(chal, pwd);
++}
++
+ /* 
+  * Functions to convert binary flags to character string.
+  * string format:  <CS64> 
+@@ -336,7 +350,11 @@
+ 		   if( !(h = find_host(host)) )
+ 		      break;
+ 
+-		   decrypt_chal(chal_res, h->passwd);   		
++		   if (h->sslauth) {
++		      ssl_decrypt_chal(chal_res, h->passwd);   		
++		   } else {
++		      nonssl_decrypt_chal(chal_res, h->passwd);   		
++		   }
+ 	
+ 		   if( !memcmp(chal_req, chal_res, VTUN_CHAL_SIZE) ){
+ 		      /* Auth successeful. */
+@@ -388,7 +406,11 @@
+ 		   if( !strncmp(buf,"OK",2) && cs2cl(buf,chal)){
+ 		      stage = ST_CHAL;
+ 					
+-		      encrypt_chal(chal,host->passwd);
++		      if (host->sslauth) {
++		         ssl_encrypt_chal(chal,host->passwd);
++		      } else {
++		         nonssl_encrypt_chal(chal,host->passwd);
++		      }
+ 		      print_p(fd,"CHAL: %s\n", cl2cs(chal));
+ 
+ 		      continue;
+diff -ru vtun-2.5-orig/cfg_file.y vtun-2.5/cfg_file.y
+--- vtun-2.5-orig/cfg_file.y	Sat Feb 16 15:49:22 2002
++++ vtun-2.5/cfg_file.y	Sat Feb 16 18:47:56 2002
+@@ -73,7 +73,7 @@
+ %token K_OPTIONS K_DEFAULT K_PORT K_PERSIST K_TIMEOUT
+ %token K_PASSWD K_PROG K_PPP K_SPEED K_IFCFG K_FWALL K_ROUTE K_DEVICE 
+ %token K_MULTI K_SRCADDR K_IFACE K_ADDR
+-%token K_TYPE K_PROT K_COMPRESS K_ENCRYPT K_KALIVE K_STAT
++%token K_TYPE K_PROT K_COMPRESS K_ENCRYPT K_KALIVE K_STAT K_SSLAUTH
+ %token K_UP K_DOWN K_SYSLOG K_IPROUTE
+ 
+ %token <str> K_HOST K_ERROR
+@@ -253,6 +253,13 @@
+ 			  parse_host->flags &= ~(VTUN_ZLIB | VTUN_LZO); 
+ 			}
+ 			compress
++
++  | K_SSLAUTH NUM 	{ 
++	      		  parse_host->sslauth = $2;
++
++			  if(vtun.sslauth == -1) 
++			     vtun.sslauth = $2; 	
++			}
+ 
+   | K_ENCRYPT NUM 	{  
+ 			  if( $2 )
+diff -ru vtun-2.5-orig/cfg_kwords.h vtun-2.5/cfg_kwords.h
+--- vtun-2.5-orig/cfg_kwords.h	Sat Dec 29 18:01:01 2001
++++ vtun-2.5/cfg_kwords.h	Sat Feb 16 18:31:30 2002
+@@ -36,6 +36,7 @@
+    { "srcaddr",  K_SRCADDR }, 
+    { "addr",  	 K_ADDR }, 
+    { "iface",  	 K_IFACE }, 
++   { "sslauth",	 K_SSLAUTH }, 
+    { "persist",	 K_PERSIST }, 
+    { "multi",	 K_MULTI }, 
+    { "iface",    K_IFACE }, 
+diff -ru vtun-2.5-orig/vtun.h vtun-2.5/vtun.h
+--- vtun-2.5-orig/vtun.h	Sat Dec 29 18:01:01 2001
++++ vtun-2.5/vtun.h	Sat Feb 16 18:31:30 2002
+@@ -97,6 +97,9 @@
+    int  rmt_fd;
+    int  loc_fd;
+ 
++   /* SSL strong auth */
++   int  sslauth;
++
+    /* Persist mode */
+    int  persist;
+ 
+@@ -170,6 +173,7 @@
+ struct vtun_opts {
+    int  timeout;
+    int  persist;
++   int  sslauth;
+ 
+    char *cfg_file;
+ 
