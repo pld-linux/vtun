@@ -1,4 +1,4 @@
-Summary:	Virtual tunnel over TCP/IP networks.
+Summary:	Virtual tunnel over TCP/IP networks
 Name:		vtun
 Version:	2.1b4
 Release:	1
@@ -74,4 +74,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vtund.conf
 %attr(755,root,root) %{_sbindir}/vtund
 %attr(755,root,root) %dir /var/log/vtund
-%{_mandir}/man8/*.gz
+%{_mandir}/man8/*
