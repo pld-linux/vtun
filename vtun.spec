@@ -2,7 +2,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.5b1
-Release:	3
+Release:	4
 Epoch:		1
 License:	GPL
 Group:		Networking/Daemons
@@ -23,6 +23,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	bison
 BuildRequires:	flex
 Prereq:		rc-scripts
+Prereq:		/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	vppp
 
@@ -69,6 +70,9 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
 
 gzip -9nf ChangeLog Credits README README.Setup README.Shaper FAQ TODO
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
 /sbin/chkconfig --add vtund
 if [ -f /var/lock/subsys/vtund ]; then
@@ -84,9 +88,6 @@ if [ "$1" = "0" ]; then
 	fi
 	/sbin/chkconfig --del vtund
 fi
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
