@@ -10,6 +10,7 @@ Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
+# Source0-md5:	b29bffeb07e66567e247641919c45b23
 Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
