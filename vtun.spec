@@ -23,6 +23,7 @@ Patch4:		%{name}-sslauth.patch
 Patch5:		%{name}-ac.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	lzo-devel
@@ -59,6 +60,7 @@ protoko³ów szeregowych.
 #%%patch4 -p1
 
 %build
+cp -f /usr/share/automake/config.* .
 # aclocal.m4 is only local, don't try to rebuild
 %{__autoheader}
 %{__autoconf}
