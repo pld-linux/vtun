@@ -1,11 +1,11 @@
---- vtun/configure.in~	2002-12-20 17:13:03.000000000 +0000
-+++ vtun/configure.in	2004-02-22 18:37:37.000000000 +0000
-@@ -117,6 +117,8 @@
- if test "$LZO" = "yes"; then
+--- vtun/configure.in.orig	Fri Dec 20 18:13:03 2002
++++ vtun/configure.in	Mon Feb 23 17:13:49 2004
+@@ -134,7 +134,7 @@
     AC_MSG_RESULT()
-    AC_CHECKING( for LZO Library and Header files ... )
-+   m4_pattern_allow([AC_SEARCH_HEADERS])
-+   m4_pattern_allow([AC_LINK_DRV])
-    AC_SEARCH_HEADERS(lzo1x.h, 
- 	$LZO_HDR_DIR /usr/include/lzo "" /usr/local/include,
-         AC_CHECK_LIB(lzo, lzo1x_decompress,
+    AC_CHECKING( for md5 Library and Header files ... )
+ AC_SEARCH_HEADERS(md5.h,
+-    $SSL_HDR_DIR /usr/include/openssl "" /usr/include /usr/include/ssl /usr/local/include /usr/local/ssl/include, /usr/include/sys, 
++    $SSL_HDR_DIR /usr/include/openssl "" /usr/include /usr/include/ssl /usr/local/include /usr/local/ssl/include /usr/include/sys, 
+     ,
+     AC_MSG_ERROR( SSL headers not found. )
+    )
