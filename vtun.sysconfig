@@ -4,7 +4,7 @@
 SERVICE_RUN_NICE_LEVEL="+5"
 
 # Config file 
-VTUND_CONF=
+VTUND_CONF="/etc/vtund.conf"
 
 # run as server or client?
 VTUND_MODE="server"
