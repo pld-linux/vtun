@@ -16,7 +16,7 @@
  int pty_open(char *sl_name)
  {
 +    int  mr_fd;
-+#ifdef HAVE_GETPT
++#ifdef HAVE_GETPT && HAVE_GRANTPT && HAVE_UNLOCKPT && HAVE_PTSNAME
 +    char *ptyname;
 +
 +    if((mr_fd=getpt()) < 0)
