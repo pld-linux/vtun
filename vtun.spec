@@ -1,14 +1,15 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
-Version:	2.4b1
+Version:	2.4
 Release:	1
+Epoch:		1
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
-Source0:	ftp://vtun.sourceforge.net/pub/vtun/%{name}-%{version}.tar.gz
+Source0:	http://vtun.sourceforge.net/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Patch0:		%{name}-makefile.patch
 URL:		http://vtun.sourceforge.net/
