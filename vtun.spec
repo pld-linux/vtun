@@ -60,7 +60,7 @@ protoko³ów szeregowych.
 %build
 aclocal
 autoheader
-autoconf
+%{__autoconf}
 %configure \
 	%{!?_without_ssl:--with-crypto-headers=%{_includedir}/openssl} \
 	%{?_without_ssl:--disable-ssl} \
