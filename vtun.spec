@@ -66,10 +66,20 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
 gzip -9nf ChangeLog Credits README README.Setup README.Shaper FAQ TODO
 
 %post
-NAME=vtund; DESC="vtun daemons"; %chkconfig_add
+/sbin/chkconfig --add vtund
+if [ -f /var/lock/subsys/vtund ]; then
+	/etc/rc.d/init.d/vtund restart >&2
+else
+	echo "Run \"/etc/rc.d/init.d/vtund start\" to start vtun daemons."
+fi
 
 %preun
-NAME=vtund; %chkconfig_del
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/vtund ]; then
+		/etc/rc.d/init.d/vtund stop >&2
+	fi
+	/sbin/chkconfig --del vtund
+fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
