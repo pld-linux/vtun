@@ -22,7 +22,7 @@ URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	lzo-devel
-%{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.6a}
+%{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.7}
 BuildRequires:	zlib-devel
 BuildRequires:	bison
 BuildRequires:	flex
