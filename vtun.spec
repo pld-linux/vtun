@@ -1,6 +1,7 @@
+#
 # Conditional build:
-# _without_ssl - build without encryption ability
-
+%bcond_without	ssl	# build without encryption ability
+#
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
@@ -25,12 +26,12 @@ BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	lzo-devel
-%{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.7c}
+%{?with_ssl:BuildRequires:	openssl-devel >= 0.9.7c}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	vppp
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_localstatedir	/var
 
@@ -61,8 +62,8 @@ protoko³ów szeregowych.
 %{__autoheader}
 %{__autoconf}
 %configure \
-	%{!?_without_ssl:--with-crypto-headers=%{_includedir}/openssl} \
-	%{?_without_ssl:--disable-ssl} \
+	%{?with_ssl:--with-crypto-headers=%{_includedir}/openssl} \
+	%{!?with_ssl:--disable-ssl} \
 	--enable-lzo
 %{__make}
 
