@@ -5,7 +5,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.5
-Release:	5
+Release:	6
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
