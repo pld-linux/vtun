@@ -23,7 +23,6 @@ Patch4:		%{name}-sslauth.patch
 Patch5:		%{name}-ac.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
-BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	lzo-devel
@@ -60,7 +59,7 @@ protoko³ów szeregowych.
 #%%patch4 -p1
 
 %build
-%{__aclocal}
+# aclocal.m4 is only local, don't try to rebuild
 %{__autoheader}
 %{__autoconf}
 %configure \
@@ -74,7 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 	$RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun}
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT INSTALL_OWNER=""
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	INSTALL_OWNER=""
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/vtund
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
