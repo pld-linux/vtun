@@ -2,7 +2,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.4
-Release:	1
+Release:	2
 Epoch:		1
 License:	GPL
 Group:		Networking/Daemons
@@ -18,6 +18,7 @@ BuildRequires:	autoconf
 BuildRequires:	lzo-devel
 BuildRequires:	openssl-devel
 BuildRequires:	zlib-devel
+Prereq:		rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	vppp
 
