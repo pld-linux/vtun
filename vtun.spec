@@ -1,15 +1,15 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Name:		vtun
-Version:	2.1b4
+Version:	2.2
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Group(pl):	Sieciowe/Serwery
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
-Source0:	http://vtun.netpedia.net/%{name}-%{version}.tar.gz
+Source0:	ftp://vtun.sourceforge.net/pub/vtun/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Patch0:		%{name}-makefile.patch
-URL:		http://vtun.netpedia.net
+URL:		http://vtun.sourceforge.net/
 BuildRequires:	openssl-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
