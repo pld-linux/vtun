@@ -29,7 +29,7 @@ err_exit() {
 
 [ -n "$VTUND_MODE" ] || err_exit "VTUND_MODE not set"
 
-VTUND_OPTS="$VTUND_OPTS $VTUND_CONF"
+VTUND_OPTS="$VTUND_OPTS -f $VTUND_CONF"
     
 if [ $VTUND_MODE = "server" ]; then
     VTUND_OPTS="$VTUND_OPTS -s"
