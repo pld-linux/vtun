@@ -40,7 +40,10 @@ protoko³ów szeregowych.
 %prep
 %setup -q
 %patch -p1
+
 %build
+aclocal
+autoconf
 %configure \
 	--with-crypto-headers=%{_includedir}/openssl \
 	--enable-lzo
