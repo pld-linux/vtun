@@ -4,13 +4,13 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
-Version:	2.5
-Release:	6
+Version:	2.6
+Release:	0.1
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
-# Source0-md5:	b29bffeb07e66567e247641919c45b23
+# Source0-md5:	309534fd03c5d13a19c43916f61f4bbf
 Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
@@ -52,11 +52,9 @@ protoko³ów szeregowych.
 
 %prep
 %setup -q -n vtun
-%patch0 -p1
-%patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
+# must be ported
+#%%patch4 -p1
 
 %build
 %{__aclocal}
@@ -73,10 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 	$RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun}
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install DESTDIR=$RPM_BUILD_ROOT INSTALL_OWNER=""
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/vtund
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
+touch $RPM_BUILD_ROOT%{_sysconfdir}/vtund.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -99,7 +98,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc ChangeLog Credits README README.Setup README.Shaper FAQ TODO
+%doc ChangeLog Credits README README.Setup README.Shaper FAQ TODO vtund.conf
 %attr(754,root,root) /etc/rc.d/init.d/vtund
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/vtun
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vtund.conf
