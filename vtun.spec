@@ -1,5 +1,5 @@
 Name:		vtun
-Version:	2.0
+Version:	2.1b3
 Release:	1
 License:	GPL
 Group:		Networking/Daemons

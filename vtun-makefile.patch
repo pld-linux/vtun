@@ -1,17 +1,17 @@
-diff -ruN vtun-2.0.orig/Makefile.in vtun-2.0/Makefile.in
---- vtun-2.0.orig/Makefile.in	Fri Dec 31 04:33:17 1999
-+++ vtun-2.0/Makefile.in	Sat Feb 19 17:20:21 2000
-@@ -21,6 +21,8 @@
- prefix = @prefix@
- exec_prefix = @exec_prefix@
+diff -ruN vtun-2.1b3.orig/Makefile.in vtun-2.1b3/Makefile.in
+--- vtun-2.1b3.orig/Makefile.in	Thu Mar  9 01:40:45 2000
++++ vtun-2.1b3/Makefile.in	Sat Mar 18 01:21:17 2000
+@@ -27,6 +27,8 @@
+ LEX = @LEX@
+ LEXFLAGS = 
  
 +DESTDIR =
 +
- SBIN_DIR = @sbindir@
- MAN_DIR  = @mandir@
- ETC_DIR  = @sysconfdir@
-@@ -103,19 +105,15 @@
- 	rm -f $(CONFIGURE_FILES)
+ INSTALL = @INSTALL@
+ 
+ prefix = @prefix@
+@@ -78,22 +80,18 @@
+ 	./config.drivers unlink
  
  install_man: 
 -	$(INSTALL) -d -m 644 -o root -g 0 $(MAN_DIR)/man8
@@ -19,22 +19,26 @@ diff -ruN vtun-2.0.orig/Makefile.in vtun-2.0/Makefile.in
 -	rm -f $(MAN_DIR)/man8/vtun.8 
 -	ln -s vtund.8 $(MAN_DIR)/man8/vtun.8 
 +	$(INSTALL) -d $(DESTDIR)$(MAN_DIR)/man8
-+	$(INSTALL) vtund.8 $(DESTDIR)$(MAN_DIR)/man8
++	$(INSTALL) -m 644 vtund.8 $(DESTDIR)$(MAN_DIR)/man8
  
  install_config: 
 -	$(INSTALL) -d -m 755 -o root -g 0 $(ETC_DIR)
 -	if [ ! -f $(ETC_DIR)/vtund.conf ]; then \
 -	  $(INSTALL) -m 600 -o root -g 0 vtund.conf $(ETC_DIR); \
 -	fi
-+	$(INSTALL) -d $(DESTDIR)$(ETC_DIR)
-+	$(INSTALL)  vtund.conf $(DESTDIR)$(ETC_DIR)
++	$(INSTALL) -d -m 755 $(DESTDIR)$(ETC_DIR)
++	$(INSTALL) -m 600 vtund.conf $(DESTDIR)$(ETC_DIR); \
  
  install: vtund install_config install_man
 -	$(INSTALL) -d -m 755 -o root -g 0 $(VAR_DIR)/run
--	$(INSTALL) -d -m 755 -o root -g 0 $(VAR_DIR)/log/vtund
+-	$(INSTALL) -d -m 755 -o root -g 0 $(STAT_DIR)
+-	$(INSTALL) -d -m 755 -o root -g 0 $(LOCK_DIR)
 -	$(INSTALL) -d -m 755 -o root -g 0 $(SBIN_DIR)
 -	$(INSTALL) -m 755 -o root -g 0 vtund $(SBIN_DIR)
-+	$(INSTALL) -d $(DESTDIR)$(VAR_DIR)/run
-+	$(INSTALL) -d $(DESTDIR)$(VAR_DIR)/log/vtund
-+	$(INSTALL) -d $(DESTDIR)$(SBIN_DIR)
++	$(INSTALL) -d -m 755 $(DESTDIR)$(VAR_DIR)/run
++	$(INSTALL) -d -m 755 $(DESTDIR)$(STAT_DIR)
++	$(INSTALL) -d -m 755 $(DESTDIR)$(LOCK_DIR)
++	$(INSTALL) -d -m 755 $(DESTDIR)$(SBIN_DIR)
 +	$(INSTALL) -m 755 vtund $(DESTDIR)$(SBIN_DIR)
+ 
+ # DO NOT DELETE THIS LINE -- make depend depends on it.
