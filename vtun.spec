@@ -1,4 +1,5 @@
 Summary:	Virtual tunnel over TCP/IP networks
+Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.3
 Release:	2
@@ -28,6 +29,12 @@ configurable, it can be used for various network task like VPN, Mobil
 IP, Shaped Internet access, IP address saving, etc. It is completely
 user space implementation and does not require modification to any
 kernel parts. You need SSLeay-devel and lzo-devel to build it.
+
+%description -l pl
+VTun umo¿liwia tworzenie Wirtualnych Tunelu poprzez sieci TCP/IP
+wraz z przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
+Wspierane typy tuneli to: PPP, IP, Ethernet i wiêkszo¶æ pozosta³ych
+protoko³ów szeregowych.
 
 %prep
 %setup -q
