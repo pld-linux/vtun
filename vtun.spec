@@ -77,7 +77,6 @@ install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/vtund
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
 
-gzip -9nf ChangeLog Credits README README.Setup README.Shaper FAQ TODO
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -100,7 +99,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc ChangeLog Credits README README.Setup README.Shaper FAQ TODO
 %attr(754,root,root) /etc/rc.d/init.d/vtund
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/vtun
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vtund.conf
