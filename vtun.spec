@@ -11,6 +11,7 @@ Source0:	ftp://vtun.sourceforge.net/pub/vtun/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Patch0:		%{name}-makefile.patch
 URL:		http://vtun.sourceforge.net/
+BuildRequires:	lzo-devel
 BuildRequires:	openssl-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
