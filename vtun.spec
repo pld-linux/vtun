@@ -1,6 +1,6 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Name:		vtun
-Version:	2.2
+Version:	2.3
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
@@ -33,7 +33,8 @@ kernel parts. You need SSLeay-devel and lzo-devel to build it.
 %build
 LDFLAGS="-s"; export LDFLAGS
 %configure \
-	--with-crypto-headers=%{_includedir}/openssl
+	--with-crypto-headers=%{_includedir}/openssl \
+	--enable-lzo
 %{__make}
 
 %install
@@ -45,8 +46,7 @@ install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/vtund
 
-gzip -9nf ChangeLog Credits README README.Setup README.Shaper FAQ TODO \
-	$RPM_BUILD_ROOT%{_mandir}/*/*
+gzip -9nf ChangeLog Credits README README.Setup README.Shaper FAQ TODO
 
 %post
 /sbin/chkconfig --add vtund
@@ -74,4 +74,4 @@ rm -rf $RPM_BUILD_ROOT
 %attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vtund.conf
 %attr(755,root,root) %{_sbindir}/vtund
 %attr(755,root,root) %dir /var/log/vtund
-%{_mandir}/man8/*
+%{_mandir}/man*/*
