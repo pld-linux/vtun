@@ -4,21 +4,22 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
-Version:	2.5b1
-Release:	6
-Epoch:		1
+Version:	2.5
+Release:	1
+Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
 Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
-Source0:	http://vtun.sourceforge.net/%{name}-%{version}.tar.gz
+Source0:	http://prdownloads.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-makefile.patch
-Patch1:		%{name}-iproute.patch
+Patch1:		%{name}-expect.patch
 Patch2:		%{name}-autoheader.patch
 Patch3:		%{name}-getpt.patch
+#Patch4:		%{name}-sslauth.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -51,11 +52,12 @@ Wspierane typy tuneli to: PPP, IP, Ethernet i wiêkszo¶æ pozosta³ych
 protoko³ów szeregowych.
 
 %prep
-%setup -q
+%setup -q -n vtun
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+#%patch4 -p1
 
 %build
 aclocal
