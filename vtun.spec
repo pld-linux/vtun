@@ -19,7 +19,7 @@ Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-iproute.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
-BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	lzo-devel
 %{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.6a}
 BuildRequires:	zlib-devel
