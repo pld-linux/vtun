@@ -48,3 +48,51 @@ diff -ruN vtun-2.3.orig/Makefile.in vtun-2.3/Makefile.in
 +	$(INSTALL) -m 755 vtund $(DESTDIR)$(SBIN_DIR)
  
  # DO NOT DELETE THIS LINE -- make depend depends on it.
+--- vtun-2.4/configure.in	Thu Dec 28 06:35:10 2000
++++ vtun-2.4/configure.in-p	Tue Feb 13 20:52:44 2001
+@@ -100,6 +100,22 @@
+ dnl Check for setproctitle in libutil
+ AC_SEARCH_LIBS(setproctitle, util bsd, AC_DEFINE(HAVE_SETPROC_TITLE) )
+ 
++if test "$SSL" = "yes"; then
++   AC_MSG_RESULT()
++   AC_CHECKING( for SSL Library and Header files ... )
++   AC_SEARCH_HEADERS(md5.h blowfish.h,
++	$SSL_HDR_DIR /usr/include/ssl /usr/include/openssl /usr/include /usr/local/include /usr/local/ssl/include,
++	AC_CHECK_LIB(crypto, BF_set_key,
++	    [
++	       LIBS="$LIBS -lcrypto"
++	       AC_DEFINE(HAVE_SSL)
++	    ],
++	    AC_MSG_ERROR( SSL library not found. )
++	),
++	AC_MSG_ERROR( SSL headers not found. )
++   )
++fi
++
+ if test "$SHAPER" = "yes"; then
+    AC_DEFINE(HAVE_SHAPER)
+ fi
+@@ -127,22 +143,6 @@
+ 	    AC_MSG_ERROR( LZO library not found. )
+ 	),
+         AC_MSG_ERROR( LZO headers not found. )
+-   )
+-fi
+-
+-if test "$SSL" = "yes"; then
+-   AC_MSG_RESULT()
+-   AC_CHECKING( for SSL Library and Header files ... )
+-   AC_SEARCH_HEADERS(md5.h blowfish.h,
+-	$SSL_HDR_DIR /usr/include/ssl /usr/include/openssl /usr/include /usr/local/include /usr/local/ssl/include,
+-	AC_CHECK_LIB(crypto, BF_set_key,
+-	    [
+-	       LIBS="$LIBS -lcrypto"
+-	       AC_DEFINE(HAVE_SSL)
+-	    ],
+-	    AC_MSG_ERROR( SSL library not found. )
+-	),
+-	AC_MSG_ERROR( SSL headers not found. )
+    )
+ fi
+ 
