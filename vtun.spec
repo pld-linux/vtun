@@ -25,7 +25,7 @@ BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	lzo-devel
-%{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.7}
+%{!?_without_ssl:BuildRequires:	openssl-devel >= 0.9.7c}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
