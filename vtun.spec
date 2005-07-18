@@ -21,12 +21,13 @@ Patch2:		%{name}-autoheader.patch
 Patch3:		%{name}-getpt.patch
 Patch4:		%{name}-sslauth.patch
 Patch5:		%{name}-ac.patch
+Patch6:		%{name}-lzo2.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
-BuildRequires:	lzo-devel
+BuildRequires:	lzo-devel >= 2.0.1
 %{?with_ssl:BuildRequires:	openssl-devel >= 0.9.7d}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
@@ -59,6 +60,7 @@ user space, wiêc nie wymaga dodatkowego wsparcia w j±drze.
 %setup -q -n vtun
 %patch2 -p1
 %patch5 -p1
+%patch6 -p1
 # must be ported
 #%%patch4 -p1
 
