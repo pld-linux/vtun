@@ -45,7 +45,7 @@ elif [ $VTUND_MODE = "client" ]; then
 	[ -n "$VTUND_PORT" ] && VTUND_OPTS="$VTUND_OPTS -P $VTUND_PORT"
 	VTUND_OPTS="$VTUND_OPTS $VTUND_SESSION $VTUND_SERVER_ADDR"
 
-else 
+else
 	err_exit "Invalid VTUND_MODE ($VTUND_MODE), should be set to \"server\" or \"client\""
 fi
 
