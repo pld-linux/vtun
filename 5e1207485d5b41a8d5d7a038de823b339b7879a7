@@ -1,0 +1,3 @@
+- updated to 2.6 (only patch4 must be forward ported)
+- don't install vtund.conf with default passwords (security issue)
+  but include it in docs for reference
