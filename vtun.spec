@@ -30,8 +30,8 @@ BuildRequires:	flex
 BuildRequires:	lzo-devel >= 2.0.1
 %{?with_ssl:BuildRequires:	openssl-devel >= 0.9.7d}
 BuildRequires:	zlib-devel
-PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 Obsoletes:	vppp
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -48,16 +48,16 @@ user space implementation and does not require modification to any
 kernel parts. You need SSLeay-devel and lzo-devel to build it.
 
 %description -l pl
-VTun umo¿liwia tworzenie tuneli poprzez sieci TCP/IP wraz
-z przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
+VTun umo¿liwia tworzenie tuneli poprzez sieci TCP/IP wraz z
+przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
 Wspierane typy tuneli to: PPP, IP, Ethernet i wiêkszo¶æ pozosta³ych
 protoko³ów szeregowych. VTun jest ³atwy i elastyczny w konfiguracji.
-Mo¿e zostaæ wykorzystany do takich sieciowych zastosowañ jak VPN, 
+Mo¿e zostaæ wykorzystany do takich sieciowych zastosowañ jak VPN,
 Mobil IP, ³±cza o okre¶lonym pa¶mie oraz innych. Dzia³a w warstwie
 user space, wiêc nie wymaga dodatkowego wsparcia w j±drze.
 
 %prep
-%setup -q -n vtun
+%setup -q -n %{name}
 %patch2 -p1
 %patch5 -p1
 %patch6 -p1
@@ -111,8 +111,8 @@ fi
 %defattr(644,root,root,755)
 %doc ChangeLog Credits README README.Setup README.Shaper FAQ TODO vtund.conf
 %attr(754,root,root) /etc/rc.d/init.d/vtund
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/vtun
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vtund.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/vtun
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vtund.conf
 %attr(755,root,root) %{_sbindir}/vtund
 %attr(755,root,root) %dir /var/log/vtund
 %{_mandir}/man*/*
