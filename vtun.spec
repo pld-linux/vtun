@@ -10,9 +10,8 @@ Release:	2
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
-Vendor:		Maxim Krasnyansky <max_mk@yahoo.com>
-# Source0-md5:	309534fd03c5d13a19c43916f61f4bbf
 Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
+# Source0-md5:	309534fd03c5d13a19c43916f61f4bbf
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-makefile.patch
@@ -29,6 +28,7 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	lzo-devel >= 2.0.1
 %{?with_ssl:BuildRequires:	openssl-devel >= 0.9.7d}
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	zlib-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
@@ -93,17 +93,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add vtund
-if [ -f /var/lock/subsys/vtund ]; then
-	/etc/rc.d/init.d/vtund restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/vtund start\" to start vtun daemons."
-fi
+%service vtund restart "vtun daemons"
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/vtund ]; then
-		/etc/rc.d/init.d/vtund stop >&2
-	fi
+	%service vtund stop
 	/sbin/chkconfig --del vtund
 fi
 
