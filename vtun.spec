@@ -21,6 +21,7 @@ Patch3:		%{name}-getpt.patch
 Patch4:		%{name}-sslauth.patch
 Patch5:		%{name}-ac.patch
 Patch6:		%{name}-lzo2.patch
+Patch7:		%{name}-linking.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -61,6 +62,7 @@ user space, wiêc nie wymaga dodatkowego wsparcia w j±drze.
 %patch2 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 # must be ported
 #%%patch4 -p1
 
