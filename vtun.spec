@@ -6,7 +6,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.6
-Release:	2
+Release:	3
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
@@ -20,13 +20,13 @@ Patch2:		%{name}-autoheader.patch
 Patch3:		%{name}-getpt.patch
 Patch4:		%{name}-sslauth.patch
 Patch5:		%{name}-ac.patch
-Patch6:		%{name}-lzo2.patch
+Patch6:		%{name}-linking.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
-BuildRequires:	lzo-devel >= 2.0.1
+BuildRequires:	lzo-devel
 %{?with_ssl:BuildRequires:	openssl-devel >= 0.9.7d}
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	zlib-devel
