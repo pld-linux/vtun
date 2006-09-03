@@ -28,7 +28,7 @@ fi
 [ -f /etc/sysconfig/vtun ] && . /etc/sysconfig/vtun
 
 err_exit() {
-	echo @$
+	echo $@
 	exit 1
 }
 
