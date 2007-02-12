@@ -3,7 +3,7 @@
 %bcond_without	ssl	# build without encryption ability
 #
 Summary:	Virtual tunnel over TCP/IP networks
-Summary(pl):	Wirtualne tunele poprzez sieci TCP/IP
+Summary(pl.UTF-8):   Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.6
 Release:	4
@@ -48,14 +48,14 @@ IP, Shaped Internet access, IP address saving, etc. It is completely
 user space implementation and does not require modification to any
 kernel parts. You need SSLeay-devel and lzo-devel to build it.
 
-%description -l pl
-VTun umo¿liwia tworzenie tuneli poprzez sieci TCP/IP wraz z
-przydzielaniem pasma, kompresj±, szyfrowaniem danych w tunelach.
-Wspierane typy tuneli to: PPP, IP, Ethernet i wiêkszo¶æ pozosta³ych
-protoko³ów szeregowych. VTun jest ³atwy i elastyczny w konfiguracji.
-Mo¿e zostaæ wykorzystany do takich sieciowych zastosowañ jak VPN,
-Mobil IP, ³±cza o okre¶lonym pa¶mie oraz innych. Dzia³a w warstwie
-user space, wiêc nie wymaga dodatkowego wsparcia w j±drze.
+%description -l pl.UTF-8
+VTun umoÅ¼liwia tworzenie tuneli poprzez sieci TCP/IP wraz z
+przydzielaniem pasma, kompresjÄ…, szyfrowaniem danych w tunelach.
+Wspierane typy tuneli to: PPP, IP, Ethernet i wiÄ™kszoÅ›Ä‡ pozostaÅ‚ych
+protokoÅ‚Ã³w szeregowych. VTun jest Å‚atwy i elastyczny w konfiguracji.
+MoÅ¼e zostaÄ‡ wykorzystany do takich sieciowych zastosowaÅ„ jak VPN,
+Mobil IP, Å‚Ä…cza o okreÅ›lonym paÅ›mie oraz innych. DziaÅ‚a w warstwie
+user space, wiÄ™c nie wymaga dodatkowego wsparcia w jÄ…drze.
 
 %prep
 %setup -q -n %{name}
