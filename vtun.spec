@@ -3,7 +3,7 @@
 %bcond_without	ssl	# build without encryption ability
 #
 Summary:	Virtual tunnel over TCP/IP networks
-Summary(pl.UTF-8):   Wirtualne tunele poprzez sieci TCP/IP
+Summary(pl.UTF-8):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	2.6
 Release:	4
