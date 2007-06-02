@@ -89,6 +89,7 @@ install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/vtund
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
 touch $RPM_BUILD_ROOT%{_sysconfdir}/vtund.conf
+echo ".so vtund.8" > $RPM_BUILD_ROOT%{_mandir}/man8/vtun.8
 
 %clean
 rm -rf $RPM_BUILD_ROOT
