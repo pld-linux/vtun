@@ -5,13 +5,13 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl.UTF-8):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
-Version:	2.6
-Release:	4
+Version:	3.0.1
+Release:	0.1
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
-# Source0-md5:	309534fd03c5d13a19c43916f61f4bbf
+# Source0-md5:	c342ffe77055d4248a38f0b380f28c1b
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-makefile.patch
@@ -58,10 +58,10 @@ Mobil IP, łącza o określonym paśmie oraz innych. Działa w warstwie
 user space, więc nie wymaga dodatkowego wsparcia w jądrze.
 
 %prep
-%setup -q -n %{name}
+%setup -q
 %patch2 -p1
-%patch5 -p1
-%patch6 -p1
+#%patch5 -p1
+#%patch6 -p1
 %patch7 -p1
 # must be ported
 #%%patch4 -p1
@@ -69,7 +69,7 @@ user space, więc nie wymaga dodatkowego wsparcia w jądrze.
 %build
 cp -f /usr/share/automake/config.* .
 # aclocal.m4 is only local, don't try to rebuild
-%{__autoheader}
+#%{__autoheader}
 %{__autoconf}
 %configure \
 	%{?with_ssl:--with-crypto-headers=%{_includedir}/openssl} \
