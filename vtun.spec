@@ -5,13 +5,13 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl.UTF-8):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
-Version:	3.0.1
+Version:	3.0.2
 Release:	0.1
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
-# Source0-md5:	c342ffe77055d4248a38f0b380f28c1b
+# Source0-md5:	d3d8bc4d58886498a1c338670eab9315
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-makefile.patch
