@@ -1,4 +1,4 @@
-## $Revision: 1.76 $, $Date: 2008-09-01 14:56:25 $
+## $Revision: 1.77 $, $Date: 2008-09-01 15:00:13 $
 #
 # Conditional build:
 %bcond_without	ssl	# build without encryption ability
@@ -7,7 +7,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl.UTF-8):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	3.0.2
-Release:	0.1
+Release:	1
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
