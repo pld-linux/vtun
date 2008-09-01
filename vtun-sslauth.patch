@@ -1,23 +1,10 @@
-diff -uNr vtun-2.5-orig/ChangeLog vtun-2.5/ChangeLog
---- vtun-2.5-orig/ChangeLog	Mon Jan 14 23:42:42 2002
-+++ vtun-2.5/ChangeLog	Sun Feb 17 23:12:57 2002
-@@ -1,3 +1,9 @@
-+ver 2.5arc:
-+	 Add sslauth option - possible to connect ssl and non-ssl
-+	 clients/servers.
-+	 If possible use /dev/random in non-ssl gen_chal for random generator
-+	 seed.
-+
- ver 2.5:
- 	 New config option to keep tun device always open
- 	 iproute support
-diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
---- vtun-2.5-orig/auth.c	Thu Sep  6 21:43:41 2001
-+++ vtun-2.5/auth.c	Mon Feb 18 00:46:52 2002
-@@ -26,6 +26,10 @@
-  *
-  * Jim Yonan, 05/24/2001
-  * 	gen_chal rewrite to use better random number generator 
+diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
+--- vtun-3.0.2-orig/auth.c	2008-01-07 22:35:18.000000000 +0000
++++ vtun-3.0.2/auth.c	2008-09-01 14:20:13.000000000 +0000
+@@ -23,6 +23,10 @@
+ /*
+  * Challenge based authentication. 
+  * Thanx to Chris Todd<christ@insynq.com> for the good idea.
 + *
 + * Artur R. Czechowski <arturcz@hell.pl>, 02/17/2002
 + * 	Add support for connectin ssl to non-ssl vtuns (sslauth option)
@@ -25,36 +12,39 @@ diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
   */ 
  
  #include "config.h"
-@@ -58,34 +62,53 @@
+@@ -55,34 +59,57 @@
  #include "lock.h"
  #include "auth.h"
  
 -/* Encryption and Decryption of the challenge key */
  #ifdef HAVE_SSL
--
- #include <md5.h>
- #include <blowfish.h>
- #include <rand.h>
-+#endif
+ 
+ #include <openssl/md5.h>
+ #include <openssl/blowfish.h>
+ #include <openssl/rand.h>
+ 
++#endif /* HAVE_SSL */
 +
++/* Okay, start the "blue-wire" non-ssl auth patch stuff */
 +void nonssl_encrypt_chal(char *chal, char *pwd)
-+{ 
-+   char * xor_msk = pwd;
++{
++   char *xor_msk = pwd;
 +   register int i, xor_len = strlen(xor_msk);
 +
-+   syslog(LOG_INFO,"Use nonSSL-aware challenge/response");
++   syslog(LOG_INFO, "Use nonSSL-aware challenge/response");
 +   for(i=0; i < VTUN_CHAL_SIZE; i++)
 +      chal[i] ^= xor_msk[i%xor_len];
 +}
 +
-+void inline nonssl_decrypt_chal(char *chal, char *pwd)
-+{ 
++inline void nonssl_decrypt_chal(char *chal, char *pwd)
++{
 +   nonssl_encrypt_chal(chal, pwd);
 +}
- 
++/* Mostly ended here, other than a couple replaced #ifdefs */
 +
-+/* Encryption and Decryption of the challenge key */
++/* Encryption and Decryption of the challenge-key */
 +#ifdef HAVE_SSL
++
  void gen_chal(char *buf)
  {
     RAND_bytes(buf, VTUN_CHAL_SIZE);
@@ -66,7 +56,7 @@ diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
     register int i;
     BF_KEY key;
  
-+   syslog(LOG_INFO,"Use SSL-aware challenge/response");
++   syslog(LOG_INFO, "Use SSL-aware challenge/response");
     BF_set_key(&key, 16, MD5(pwd,strlen(pwd),NULL));
  
     for(i=0; i < VTUN_CHAL_SIZE; i += 8 )
@@ -79,11 +69,11 @@ diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
     register int i;
     BF_KEY key;
  
-+   syslog(LOG_INFO,"Use SSL-aware challenge/response");
++   syslog(LOG_INFO, "Use SSL-aware challenge/response");
     BF_set_key(&key, 16, MD5(pwd,strlen(pwd),NULL));
  
     for(i=0; i < VTUN_CHAL_SIZE; i += 8 )
-@@ -94,30 +117,43 @@
+@@ -91,30 +118,43 @@
  
  #else /* HAVE_SSL */
  
@@ -143,7 +133,7 @@ diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
  #endif /* HAVE_SSL */
  
  /* 
-@@ -336,7 +372,11 @@
+@@ -353,7 +393,11 @@
  		   if( !(h = find_host(host)) )
  		      break;
  
@@ -156,7 +146,7 @@ diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
  	
  		   if( !memcmp(chal_req, chal_res, VTUN_CHAL_SIZE) ){
  		      /* Auth successeful. */
-@@ -388,7 +428,11 @@
+@@ -405,7 +449,11 @@
  		   if( !strncmp(buf,"OK",2) && cs2cl(buf,chal)){
  		      stage = ST_CHAL;
  					
@@ -169,11 +159,11 @@ diff -uNr vtun-2.5-orig/auth.c vtun-2.5/auth.c
  		      print_p(fd,"CHAL: %s\n", cl2cs(chal));
  
  		      continue;
-diff -uNr vtun-2.5-orig/cfg_file.y vtun-2.5/cfg_file.y
---- vtun-2.5-orig/cfg_file.y	Sat Feb 16 15:49:22 2002
-+++ vtun-2.5/cfg_file.y	Sat Feb 16 18:47:56 2002
-@@ -73,7 +73,7 @@
- %token K_OPTIONS K_DEFAULT K_PORT K_PERSIST K_TIMEOUT
+diff -Nur vtun-3.0.2-orig/cfg_file.y vtun-3.0.2/cfg_file.y
+--- vtun-3.0.2-orig/cfg_file.y	2008-01-07 22:35:22.000000000 +0000
++++ vtun-3.0.2/cfg_file.y	2008-09-01 14:17:39.000000000 +0000
+@@ -74,7 +74,7 @@
+ %token K_OPTIONS K_DEFAULT K_PORT K_BINDADDR K_PERSIST K_TIMEOUT
  %token K_PASSWD K_PROG K_PPP K_SPEED K_IFCFG K_FWALL K_ROUTE K_DEVICE 
  %token K_MULTI K_SRCADDR K_IFACE K_ADDR
 -%token K_TYPE K_PROT K_COMPRESS K_ENCRYPT K_KALIVE K_STAT
@@ -181,35 +171,35 @@ diff -uNr vtun-2.5-orig/cfg_file.y vtun-2.5/cfg_file.y
  %token K_UP K_DOWN K_SYSLOG K_IPROUTE
  
  %token <str> K_HOST K_ERROR
-@@ -253,6 +253,13 @@
- 			  parse_host->flags &= ~(VTUN_ZLIB | VTUN_LZO); 
+@@ -284,6 +284,13 @@
  			}
  			compress
-+
+ 
 +  | K_SSLAUTH NUM 	{ 
 +	      		  parse_host->sslauth = $2;
 +
 +			  if(vtun.sslauth == -1) 
 +			     vtun.sslauth = $2; 	
 +			}
- 
++
    | K_ENCRYPT NUM 	{  
- 			  if( $2 )
-diff -uNr vtun-2.5-orig/cfg_kwords.h vtun-2.5/cfg_kwords.h
---- vtun-2.5-orig/cfg_kwords.h	Sat Dec 29 18:01:01 2001
-+++ vtun-2.5/cfg_kwords.h	Sat Feb 16 18:31:30 2002
-@@ -36,6 +36,7 @@
-    { "srcaddr",  K_SRCADDR }, 
+ 			  if( $2 ){
+ 			     parse_host->flags |= VTUN_ENCRYPT;
+diff -Nur vtun-3.0.2-orig/cfg_kwords.h vtun-3.0.2/cfg_kwords.h
+--- vtun-3.0.2-orig/cfg_kwords.h	2008-01-07 22:35:26.000000000 +0000
++++ vtun-3.0.2/cfg_kwords.h	2008-09-01 14:17:39.000000000 +0000
+@@ -37,6 +37,7 @@
     { "addr",  	 K_ADDR }, 
     { "iface",  	 K_IFACE }, 
+    { "bindaddr", K_BINDADDR },
 +   { "sslauth",	 K_SSLAUTH }, 
     { "persist",	 K_PERSIST }, 
     { "multi",	 K_MULTI }, 
     { "iface",    K_IFACE }, 
-diff -uNr vtun-2.5-orig/main.c vtun-2.5/main.c
---- vtun-2.5-orig/main.c	Sat Dec 29 18:01:01 2001
-+++ vtun-2.5/main.c	Mon Feb 18 00:31:31 2002
-@@ -61,6 +61,7 @@
+diff -Nur vtun-3.0.2-orig/main.c vtun-3.0.2/main.c
+--- vtun-3.0.2-orig/main.c	2008-01-07 22:35:53.000000000 +0000
++++ vtun-3.0.2/main.c	2008-09-01 14:17:39.000000000 +0000
+@@ -63,6 +63,7 @@
       vtun.cfg_file = VTUN_CONFIG_FILE;
       vtun.persist = -1;
       vtun.timeout = -1;
@@ -217,7 +207,7 @@ diff -uNr vtun-2.5-orig/main.c vtun-2.5/main.c
  	
       /* Dup strings because parser will try to free them */
       vtun.ppp   = strdup("/usr/sbin/pppd");
-@@ -82,6 +83,11 @@
+@@ -85,6 +86,11 @@
       default_host.ka_interval = 30;
       default_host.ka_failure  = 4;
       default_host.loc_fd = default_host.rmt_fd = -1;
@@ -229,7 +219,7 @@ diff -uNr vtun-2.5-orig/main.c vtun-2.5/main.c
  
       /* Start logging to syslog and stderr */
       openlog("vtund", LOG_PID | LOG_NDELAY | LOG_PERROR, LOG_DAEMON);
-@@ -146,6 +152,16 @@
+@@ -158,6 +164,16 @@
  	vtun.persist = 0;
       if(vtun.timeout == -1)
  	vtun.timeout = VTUN_TIMEOUT;
@@ -246,10 +236,10 @@ diff -uNr vtun-2.5-orig/main.c vtun-2.5/main.c
  
       switch( vtun.svr_type ){
  	case -1:
-diff -uNr vtun-2.5-orig/vtun.h vtun-2.5/vtun.h
---- vtun-2.5-orig/vtun.h	Sat Dec 29 18:01:01 2001
-+++ vtun-2.5/vtun.h	Sat Feb 16 18:31:30 2002
-@@ -97,6 +97,9 @@
+diff -Nur vtun-3.0.2-orig/vtun.h vtun-3.0.2/vtun.h
+--- vtun-3.0.2-orig/vtun.h	2008-01-07 22:36:07.000000000 +0000
++++ vtun-3.0.2/vtun.h	2008-09-01 14:17:39.000000000 +0000
+@@ -99,6 +99,9 @@
     int  rmt_fd;
     int  loc_fd;
  
@@ -259,7 +249,7 @@ diff -uNr vtun-2.5-orig/vtun.h vtun-2.5/vtun.h
     /* Persist mode */
     int  persist;
  
-@@ -170,6 +173,7 @@
+@@ -193,6 +196,7 @@
  struct vtun_opts {
     int  timeout;
     int  persist;
