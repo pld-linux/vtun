@@ -1,3 +1,4 @@
+## $Revision: 1.76 $, $Date: 2008-09-01 14:56:25 $
 #
 # Conditional build:
 %bcond_without	ssl	# build without encryption ability
@@ -14,14 +15,9 @@ Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 # Source0-md5:	d3d8bc4d58886498a1c338670eab9315
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
-Patch0:		%{name}-makefile.patch
-Patch1:		%{name}-expect.patch
-Patch2:		%{name}-autoheader.patch
-Patch3:		%{name}-getpt.patch
-Patch4:		%{name}-sslauth.patch
-Patch5:		%{name}-ac.patch
-Patch6:		%{name}-lzo2.patch
-Patch7:		%{name}-linking.patch
+Patch1:		%{name}-autoheader.patch
+Patch2:		%{name}-sslauth.patch
+Patch3:		%{name}-linking.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -59,12 +55,9 @@ user space, więc nie wymaga dodatkowego wsparcia w jądrze.
 
 %prep
 %setup -q
+%patch1 -p1
 %patch2 -p1
-#%patch5 -p1
-#%patch6 -p1
-%patch7 -p1
-# must be ported
-#%%patch4 -p1
+%patch3 -p1
 
 %build
 cp -f /usr/share/automake/config.* .
