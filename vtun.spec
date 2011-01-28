@@ -1,4 +1,3 @@
-## $Revision: 1.80 $, $Date: 2010-11-13 12:09:32 $
 #
 # Conditional build:
 %bcond_without	ssl	# build without encryption ability
