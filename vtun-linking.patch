@@ -5,7 +5,7 @@ diff -Nur vtun/Makefile.in vtun.linking/Makefile.in
  #  
  CC = @CC@
  CFLAGS = @CFLAGS@ @CPPFLAGS@
--LDFLAGS = @LIBS@
+-LDFLAGS = @LDFLAGS@ @LIBS@
 +LIBS = @LIBS@
 +LDFLAGS = @LDFLAGS@
  

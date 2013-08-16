@@ -1,0 +1,10 @@
+[Unit]
+Description=Virtual Tunnels over TCP/IP networks
+After=local-fs.target
+
+[Service]
+Type=forking
+ExecStart=/lib/systemd/pld-helpers.d/vtund.sh
+
+[Install]
+WantedBy=multi-user.target

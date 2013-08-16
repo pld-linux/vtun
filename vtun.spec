@@ -5,15 +5,17 @@
 Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl.UTF-8):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
-Version:	3.0.2
-Release:	4
+Version:	3.0.3
+Release:	1
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
-# Source0-md5:	d3d8bc4d58886498a1c338670eab9315
+# Source0-md5:	f3becf2a0270910a841060c08d1db824
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
+Source3:	%{name}.service
+Source4:	%{name}.sh
 Patch1:		%{name}-autoheader.patch
 Patch2:		%{name}-sslauth.patch
 Patch3:		%{name}-linking.patch
@@ -24,10 +26,11 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	lzo-devel >= 2.0.1
 %{?with_ssl:BuildRequires:	openssl-devel >= 0.9.7d}
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.671
 BuildRequires:	zlib-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
+Requires:	systemd-units >= 206-6
 Obsoletes:	vppp
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -72,7 +75,8 @@ cp -f /usr/share/automake/config.* .
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
-	$RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun}
+	$RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_localstatedir}/log/vtun} \
+	$RPM_BUILD_ROOT{/lib/systemd/pld-helpers.d,%{systemdunitdir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -80,6 +84,8 @@ install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man8} \
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/vtund
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/vtun
+install %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vtund.service
+install %{SOURCE4} $RPM_BUILD_ROOT/lib/systemd/pld-helpers.d/vtund.sh
 touch $RPM_BUILD_ROOT%{_sysconfdir}/vtund.conf
 rm -f $RPM_BUILD_ROOT%{_mandir}/man8/vtun.8
 echo ".so vtund.8" > $RPM_BUILD_ROOT%{_mandir}/man8/vtun.8
@@ -90,12 +96,20 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add vtund
 %service vtund restart "vtun daemons"
+%systemd_post vtund.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service vtund stop
 	/sbin/chkconfig --del vtund
 fi
+%systemd_preun vtund.service
+
+%postun
+%systemd_reload
+
+%triggerpostun -- %{name} < 2:3.0.3-1
+%systemd_trigger vtund.service
 
 %files
 %defattr(644,root,root,755)
@@ -103,6 +117,8 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/vtund
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/vtun
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vtund.conf
+%{systemdunitdir}/vtund.service
+%attr(755,root,root) /lib/systemd/pld-helpers.d/vtund.sh
 %attr(755,root,root) %{_sbindir}/vtund
 %attr(755,root,root) %dir /var/log/vtund
 %{_mandir}/man*/*
