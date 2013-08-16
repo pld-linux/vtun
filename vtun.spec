@@ -10,7 +10,7 @@ Release:	1
 Epoch:		2
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/vtun/%{name}-%{version}.tar.gz
+Source0:	http://download.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 # Source0-md5:	f3becf2a0270910a841060c08d1db824
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
