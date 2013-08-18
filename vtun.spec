@@ -8,7 +8,7 @@ Name:		vtun
 Version:	3.0.3
 Release:	1
 Epoch:		2
-License:	GPL
+License:	GPL v2+
 Group:		Networking/Daemons
 Source0:	http://download.sourceforge.net/vtun/%{name}-%{version}.tar.gz
 # Source0-md5:	f3becf2a0270910a841060c08d1db824
@@ -121,4 +121,6 @@ fi
 %attr(755,root,root) /lib/systemd/pld-helpers.d/vtund.sh
 %attr(755,root,root) %{_sbindir}/vtund
 %attr(755,root,root) %dir /var/log/vtund
-%{_mandir}/man*/*
+%{_mandir}/man5/vtund.conf.5*
+%{_mandir}/man8/vtun.8*
+%{_mandir}/man8/vtund.8*
