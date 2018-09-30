@@ -1,6 +1,6 @@
-diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
---- vtun-3.0.2-orig/auth.c	2008-01-07 22:35:18.000000000 +0000
-+++ vtun-3.0.2/auth.c	2008-09-01 14:20:13.000000000 +0000
+diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
+--- vtun-3.0.4.orig/auth.c	2016-10-01 23:29:28.000000000 +0200
++++ vtun-3.0.4/auth.c	2018-09-30 12:02:45.799673157 +0200
 @@ -23,6 +23,10 @@
  /*
   * Challenge based authentication. 
@@ -23,6 +23,7 @@ diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
  #include <openssl/blowfish.h>
  #include <openssl/rand.h>
  
+-static void gen_chal(char *buf)
 +#endif /* HAVE_SSL */
 +
 +/* Okay, start the "blue-wire" non-ssl auth patch stuff */
@@ -45,12 +46,12 @@ diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
 +/* Encryption and Decryption of the challenge-key */
 +#ifdef HAVE_SSL
 +
- void gen_chal(char *buf)
++void gen_chal(char *buf)
  {
     RAND_bytes(buf, VTUN_CHAL_SIZE);
  }
  
--void encrypt_chal(char *chal, char *pwd)
+-static void encrypt_chal(char *chal, char *pwd)
 +void ssl_encrypt_chal(char *chal, char *pwd)
  { 
     register int i;
@@ -63,7 +64,7 @@ diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
        BF_ecb_encrypt(chal + i,  chal + i, &key, BF_ENCRYPT);
  }
  
--void decrypt_chal(char *chal, char *pwd)
+-static void decrypt_chal(char *chal, char *pwd)
 +void ssl_decrypt_chal(char *chal, char *pwd)
  { 
     register int i;
@@ -77,26 +78,13 @@ diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
  
  #else /* HAVE_SSL */
  
--void encrypt_chal(char *chal, char *pwd)
--{ 
+-static void encrypt_chal(char *chal, char *pwd)
++/* Generate PSEUDO random challenge key. */
++void gen_chal(char *buf)
+ { 
 -   char * xor_msk = pwd;
 -   register int i, xor_len = strlen(xor_msk);
--
--   for(i=0; i < VTUN_CHAL_SIZE; i++)
--      chal[i] ^= xor_msk[i%xor_len];
--}
--
--void inline decrypt_chal(char *chal, char *pwd)
--{ 
--   encrypt_chal(chal, pwd);
--}
--
- /* Generate PSEUDO random challenge key. */
- void gen_chal(char *buf)
- {
-    register int i;
-- 
--   srand(time(NULL));
++   register int i;
 +   unsigned int seed;
 +   char *pseed;
 +   int fd,cnt,len;
@@ -115,25 +103,72 @@ diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
 +   srand(seed);
  
     for(i=0; i < VTUN_CHAL_SIZE; i++)
-       buf[i] = (unsigned int)(255.0 * rand()/RAND_MAX);
+-      chal[i] ^= xor_msk[i%xor_len];
++      buf[i] = (unsigned int)(255.0 * rand()/RAND_MAX);
  }
-+
+ 
+-static void inline decrypt_chal(char *chal, char *pwd)
 +void ssl_encrypt_chal(char *chal, char *pwd)
-+{
+ { 
+-   encrypt_chal(chal, pwd);
 +	syslog(LOG_ERR,"Cannot use `sslauth yes' without SSL support - fallback to `sslauth no'");
 +	nonssl_encrypt_chal(chal,pwd);
-+}
-+
+ }
+ 
+-/* Generate PSEUDO random challenge key. */
+-static void gen_chal(char *buf)
 +void ssl_decrypt_chal(char *chal, char *pwd)
-+{
+ {
+-   register int i;
+- 
+-   srand(time(NULL));
+-
+-   for(i=0; i < VTUN_CHAL_SIZE; i++)
+-      buf[i] = (unsigned int)(255.0 * rand()/RAND_MAX);
 +	syslog(LOG_ERR,"Cannot use `sslauth yes' without SSL support - fallback to `sslauth no'");
 +	nonssl_decrypt_chal(chal,pwd);
-+}
+ }
 +
  #endif /* HAVE_SSL */
  
  /* 
-@@ -353,7 +393,11 @@
+@@ -123,7 +163,7 @@
+  * C - compression, S - speed for shaper and so on.
+  */ 
+ 
+-static char *bf2cf(struct vtun_host *host)
++char *bf2cf(struct vtun_host *host)
+ {
+      static char str[20], *ptr = str;
+ 
+@@ -187,7 +227,7 @@
+    FLAGS: <TuE1>
+ */
+ 
+-static int cf2bf(char *str, struct vtun_host *host)
++int cf2bf(char *str, struct vtun_host *host)
+ {
+      char *ptr, *p;
+      int s;
+@@ -277,7 +317,7 @@
+  * string format:  <char_data> 
+  */ 
+ 
+-static char *cl2cs(char *chal)
++char *cl2cs(char *chal)
+ {
+      static char str[VTUN_CHAL_SIZE*2+3], *chr="abcdefghijklmnop";
+      register char *ptr = str;
+@@ -295,7 +335,7 @@
+      return str;
+ }
+ 
+-static int cs2cl(char *str, char *chal)
++int cs2cl(char *str, char *chal)
+ {
+      register char *ptr = str;
+      register int i;
+@@ -358,7 +398,11 @@
  		   if( !(h = find_host(host)) )
  		      break;
  
@@ -146,7 +181,7 @@ diff -Nur vtun-3.0.2-orig/auth.c vtun-3.0.2/auth.c
  	
  		   if( !memcmp(chal_req, chal_res, VTUN_CHAL_SIZE) ){
  		      /* Auth successeful. */
-@@ -405,7 +449,11 @@
+@@ -410,7 +454,11 @@
  		   if( !strncmp(buf,"OK",2) && cs2cl(buf,chal)){
  		      stage = ST_CHAL;
  					

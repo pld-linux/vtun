@@ -1,0 +1,21 @@
+--- vtun-3.0.4.orig/cfg_file.y	2016-10-01 23:27:51.000000000 +0200
++++ vtun-3.0.4/cfg_file.y	2018-09-30 12:21:17.880947142 +0200
+@@ -610,7 +617,7 @@
+ }
+ 
+ /* Clear the VTUN_NAT_HACK flag which are not relevant to the current operation mode */
+-inline void clear_nat_hack_flags(int svr)
++void clear_nat_hack_flags(int svr)
+ {
+ 	if (svr)
+ 		llist_trav(&host_list,clear_nat_hack_server,NULL);
+--- vtun-3.0.4.orig/vtun.h	2016-10-01 23:27:51.000000000 +0200
++++ vtun-3.0.4/vtun.h	2018-09-30 12:21:29.038196844 +0200
+@@ -232,6 +236,6 @@
+ int  tunnel(struct vtun_host *host);
+ int  read_config(char *file);
+ struct vtun_host * find_host(char *host);
+-inline void clear_nat_hack_flags(int svr);
++void clear_nat_hack_flags(int svr);
+ 
+ #endif
