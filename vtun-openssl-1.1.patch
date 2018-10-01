@@ -16,6 +16,18 @@
  
  static int send_msg(int len, char *in, char **out);
  static int recv_msg(int len, char *in, char **out);
+@@ -157,6 +157,11 @@ int alloc_encrypt(struct vtun_host *host
+    EVP_CIPHER_CTX *pctx_enc;
+    EVP_CIPHER_CTX *pctx_dec;
+ 
++   ctx_enc = EVP_CIPHER_CTX_new();
++   ctx_dec = EVP_CIPHER_CTX_new();
++   ctx_enc_ecb = EVP_CIPHER_CTX_new();
++   ctx_dec_ecb = EVP_CIPHER_CTX_new();
++
+    enc_init_first_time = 1;   
+    dec_init_first_time = 1;   
+ 
 @@ -182,15 +182,15 @@
           keysize = 32;
           sb_init = 1;
