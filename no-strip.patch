@@ -1,0 +1,9 @@
+--- vtun-3.0.4/Makefile.in~	2021-10-03 20:20:23.000000000 +0200
++++ vtun-3.0.4/Makefile.in	2021-10-03 20:21:29.116440895 +0200
+@@ -100,6 +100,5 @@
+ 	$(INSTALL) -d -m 755 $(INSTALL_OWNER) $(DESTDIR)$(LOCK_DIR)
+ 	$(INSTALL) -d -m 755 $(INSTALL_OWNER) $(DESTDIR)$(SBIN_DIR)
+ 	$(INSTALL) -m 755 $(INSTALL_OWNER) vtund $(DESTDIR)$(SBIN_DIR)
+-	$(BIN_DIR)/strip $(DESTDIR)$(SBIN_DIR)/vtund
+ 
+ # DO NOT DELETE THIS LINE -- make depend depends on it.

@@ -1,6 +1,6 @@
-diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
---- vtun-3.0.4.orig/auth.c	2016-10-01 23:29:28.000000000 +0200
-+++ vtun-3.0.4/auth.c	2018-09-30 12:02:45.799673157 +0200
+diff -urNp -x '*.orig' vtun-3.0.4.org/auth.c vtun-3.0.4/auth.c
+--- vtun-3.0.4.org/auth.c	2016-10-01 23:29:28.000000000 +0200
++++ vtun-3.0.4/auth.c	2021-10-03 20:19:55.633327588 +0200
 @@ -23,6 +23,10 @@
  /*
   * Challenge based authentication. 
@@ -74,7 +74,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
     BF_set_key(&key, 16, MD5(pwd,strlen(pwd),NULL));
  
     for(i=0; i < VTUN_CHAL_SIZE; i += 8 )
-@@ -91,30 +118,43 @@
+@@ -91,30 +118,43 @@ static void decrypt_chal(char *chal, cha
  
  #else /* HAVE_SSL */
  
@@ -132,7 +132,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  #endif /* HAVE_SSL */
  
  /* 
-@@ -123,7 +163,7 @@
+@@ -123,7 +163,7 @@ static void gen_chal(char *buf)
   * C - compression, S - speed for shaper and so on.
   */ 
  
@@ -141,7 +141,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  {
       static char str[20], *ptr = str;
  
-@@ -187,7 +227,7 @@
+@@ -187,7 +227,7 @@ static char *bf2cf(struct vtun_host *hos
     FLAGS: <TuE1>
  */
  
@@ -150,7 +150,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  {
       char *ptr, *p;
       int s;
-@@ -277,7 +317,7 @@
+@@ -277,7 +317,7 @@ static int cf2bf(char *str, struct vtun_
   * string format:  <char_data> 
   */ 
  
@@ -159,7 +159,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  {
       static char str[VTUN_CHAL_SIZE*2+3], *chr="abcdefghijklmnop";
       register char *ptr = str;
-@@ -295,7 +335,7 @@
+@@ -295,7 +335,7 @@ static char *cl2cs(char *chal)
       return str;
  }
  
@@ -168,7 +168,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  {
       register char *ptr = str;
       register int i;
-@@ -358,7 +398,11 @@
+@@ -358,7 +398,11 @@ struct vtun_host * auth_server(int fd)
  		   if( !(h = find_host(host)) )
  		      break;
  
@@ -181,7 +181,7 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  	
  		   if( !memcmp(chal_req, chal_res, VTUN_CHAL_SIZE) ){
  		      /* Auth successeful. */
-@@ -410,7 +454,11 @@
+@@ -410,7 +454,11 @@ int auth_client(int fd, struct vtun_host
  		   if( !strncmp(buf,"OK",2) && cs2cl(buf,chal)){
  		      stage = ST_CHAL;
  					
@@ -194,10 +194,10 @@ diff -burN vtun-3.0.4.orig/auth.c vtun-3.0.4/auth.c
  		      print_p(fd,"CHAL: %s\n", cl2cs(chal));
  
  		      continue;
-diff -Nur vtun-3.0.2-orig/cfg_file.y vtun-3.0.2/cfg_file.y
---- vtun-3.0.2-orig/cfg_file.y	2008-01-07 22:35:22.000000000 +0000
-+++ vtun-3.0.2/cfg_file.y	2008-09-01 14:17:39.000000000 +0000
-@@ -74,7 +74,7 @@
+diff -urNp -x '*.orig' vtun-3.0.4.org/cfg_file.y vtun-3.0.4/cfg_file.y
+--- vtun-3.0.4.org/cfg_file.y	2016-10-01 23:27:51.000000000 +0200
++++ vtun-3.0.4/cfg_file.y	2021-10-03 20:19:55.633327588 +0200
+@@ -74,7 +74,7 @@ int yyerror(char *s);
  %token K_OPTIONS K_DEFAULT K_PORT K_BINDADDR K_PERSIST K_TIMEOUT
  %token K_PASSWD K_PROG K_PPP K_SPEED K_IFCFG K_FWALL K_ROUTE K_DEVICE 
  %token K_MULTI K_SRCADDR K_IFACE K_ADDR
@@ -206,7 +206,7 @@ diff -Nur vtun-3.0.2-orig/cfg_file.y vtun-3.0.2/cfg_file.y
  %token K_UP K_DOWN K_SYSLOG K_IPROUTE
  
  %token <str> K_HOST K_ERROR
-@@ -284,6 +284,13 @@
+@@ -285,6 +285,13 @@ host_option: '\n'
  			}
  			compress
  
@@ -220,10 +220,10 @@ diff -Nur vtun-3.0.2-orig/cfg_file.y vtun-3.0.2/cfg_file.y
    | K_ENCRYPT NUM 	{  
  			  if( $2 ){
  			     parse_host->flags |= VTUN_ENCRYPT;
-diff -Nur vtun-3.0.2-orig/cfg_kwords.h vtun-3.0.2/cfg_kwords.h
---- vtun-3.0.2-orig/cfg_kwords.h	2008-01-07 22:35:26.000000000 +0000
-+++ vtun-3.0.2/cfg_kwords.h	2008-09-01 14:17:39.000000000 +0000
-@@ -37,6 +37,7 @@
+diff -urNp -x '*.orig' vtun-3.0.4.org/cfg_kwords.h vtun-3.0.4/cfg_kwords.h
+--- vtun-3.0.4.org/cfg_kwords.h	2016-10-01 23:27:51.000000000 +0200
++++ vtun-3.0.4/cfg_kwords.h	2021-10-03 20:19:55.633327588 +0200
+@@ -37,6 +37,7 @@ struct kword cfg_keyword[] = {
     { "addr",  	 K_ADDR }, 
     { "iface",  	 K_IFACE }, 
     { "bindaddr", K_BINDADDR },
@@ -231,10 +231,10 @@ diff -Nur vtun-3.0.2-orig/cfg_kwords.h vtun-3.0.2/cfg_kwords.h
     { "persist",	 K_PERSIST }, 
     { "multi",	 K_MULTI }, 
     { "iface",    K_IFACE }, 
-diff -Nur vtun-3.0.2-orig/main.c vtun-3.0.2/main.c
---- vtun-3.0.2-orig/main.c	2008-01-07 22:35:53.000000000 +0000
-+++ vtun-3.0.2/main.c	2008-09-01 14:17:39.000000000 +0000
-@@ -63,6 +63,7 @@
+diff -urNp -x '*.orig' vtun-3.0.4.org/main.c vtun-3.0.4/main.c
+--- vtun-3.0.4.org/main.c	2016-10-01 23:37:39.000000000 +0200
++++ vtun-3.0.4/main.c	2021-10-03 20:19:55.633327588 +0200
+@@ -79,6 +79,7 @@ int main(int argc, char *argv[], char *e
       vtun.cfg_file = VTUN_CONFIG_FILE;
       vtun.persist = -1;
       vtun.timeout = -1;
@@ -242,9 +242,9 @@ diff -Nur vtun-3.0.2-orig/main.c vtun-3.0.2/main.c
  	
       /* Dup strings because parser will try to free them */
       vtun.ppp   = strdup("/usr/sbin/pppd");
-@@ -85,6 +86,11 @@
+@@ -101,6 +102,11 @@ int main(int argc, char *argv[], char *e
       default_host.ka_interval = 30;
-      default_host.ka_failure  = 4;
+      default_host.ka_maxfail  = 4;
       default_host.loc_fd = default_host.rmt_fd = -1;
 +#ifdef HAVE_SSL
 +     default_host.sslauth = 1;
@@ -254,7 +254,7 @@ diff -Nur vtun-3.0.2-orig/main.c vtun-3.0.2/main.c
  
       /* Start logging to syslog and stderr */
       openlog("vtund", LOG_PID | LOG_NDELAY | LOG_PERROR, LOG_DAEMON);
-@@ -158,6 +164,16 @@
+@@ -181,6 +187,16 @@ int main(int argc, char *argv[], char *e
  	vtun.persist = 0;
       if(vtun.timeout == -1)
  	vtun.timeout = VTUN_TIMEOUT;
@@ -271,10 +271,10 @@ diff -Nur vtun-3.0.2-orig/main.c vtun-3.0.2/main.c
  
       switch( vtun.svr_type ){
  	case -1:
-diff -Nur vtun-3.0.2-orig/vtun.h vtun-3.0.2/vtun.h
---- vtun-3.0.2-orig/vtun.h	2008-01-07 22:36:07.000000000 +0000
-+++ vtun-3.0.2/vtun.h	2008-09-01 14:17:39.000000000 +0000
-@@ -99,6 +99,9 @@
+diff -urNp -x '*.orig' vtun-3.0.4.org/vtun.h vtun-3.0.4/vtun.h
+--- vtun-3.0.4.org/vtun.h	2016-10-01 23:27:51.000000000 +0200
++++ vtun-3.0.4/vtun.h	2021-10-03 20:19:55.633327588 +0200
+@@ -100,6 +100,9 @@ struct vtun_host {
     int  rmt_fd;
     int  loc_fd;
  
@@ -284,7 +284,7 @@ diff -Nur vtun-3.0.2-orig/vtun.h vtun-3.0.2/vtun.h
     /* Persist mode */
     int  persist;
  
-@@ -193,6 +196,7 @@
+@@ -205,6 +208,7 @@ extern llist host_list;
  struct vtun_opts {
     int  timeout;
     int  persist;

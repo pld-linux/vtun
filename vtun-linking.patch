@@ -1,6 +1,6 @@
-diff -Nur vtun/Makefile.in vtun.linking/Makefile.in
---- vtun/Makefile.in	2002-12-20 17:55:47.000000000 +0100
-+++ vtun.linking/Makefile.in	2006-08-03 04:29:13.000000000 +0200
+diff -urNp -x '*.orig' vtun-3.0.4.org/Makefile.in vtun-3.0.4/Makefile.in
+--- vtun-3.0.4.org/Makefile.in	2016-10-01 23:46:00.000000000 +0200
++++ vtun-3.0.4/Makefile.in	2021-10-03 20:19:55.696660777 +0200
 @@ -19,7 +19,8 @@
  #  
  CC = @CC@
@@ -11,12 +11,12 @@ diff -Nur vtun/Makefile.in vtun.linking/Makefile.in
  
  YACC = @YACC@
  YACCFLAGS = -d
-@@ -58,7 +59,7 @@
+@@ -59,7 +60,7 @@ CONFIGURE_FILES = Makefile config.status
  	$(CC) $(CFLAGS) $(DEFS) -c $<
  
  vtund: $(OBJS)
 -	$(CC) $(CFLAGS) -o vtund $(OBJS) $(LFD_OBJS) $(LDFLAGS)
 +	$(CC) $(LDFLAGS) $(CFLAGS) -o vtund $(OBJS) $(LFD_OBJS) $(LIBS)
  
- cfg_file.tab.c: cfg_file.y cfg_kwords.h config.h
+ cfg_file.tab.h:
  	$(YACC) $(YACCFLAGS) -b cfg_file cfg_file.y

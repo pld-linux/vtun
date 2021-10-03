@@ -6,7 +6,7 @@ Summary:	Virtual tunnel over TCP/IP networks
 Summary(pl.UTF-8):	Wirtualne tunele poprzez sieci TCP/IP
 Name:		vtun
 Version:	3.0.4
-Release:	2
+Release:	3
 Epoch:		2
 License:	GPL v2+
 Group:		Networking/Daemons
@@ -21,6 +21,7 @@ Patch2:		%{name}-sslauth.patch
 Patch3:		%{name}-linking.patch
 Patch4:		%{name}-openssl-1.1.patch
 Patch5:		%{name}-dont-inline.patch
+Patch6:		no-strip.patch
 URL:		http://vtun.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -64,6 +65,7 @@ user space, więc nie wymaga dodatkowego wsparcia w jądrze.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 cp -f /usr/share/automake/config.* .
